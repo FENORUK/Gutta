@@ -1,5 +1,5 @@
 import React from "react"
 
-export default function LayoutWorkSpace() {
+export function LayoutWorkSpace() {
     return <div>LayoutWorkSpace</div>
 }

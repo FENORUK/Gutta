@@ -1,12 +1,13 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import Favorites from "./pages/Favorites/Favorites"
-import Personal from "./pages/Personal/Personal"
-import Shared from "./pages/Shared/Shared"
-import Recent from "./pages/Recent/Recent"
+
+import {Favorites} from "./pages/Favorites"
+import {Personal} from "./pages/Personal"
+import {Shared} from "./pages/Shared"
+import {Recent} from "./pages/Recent"
 
 function App() {
     return (
-        <div className={"App"}>
+        <div className="App">
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Personal />} />
