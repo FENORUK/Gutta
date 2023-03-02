@@ -6,14 +6,11 @@ export const useAuth = () => {
     const [user, setUser] = useState()
 
     const logout = () => {
-        console.log("logout")
         cookies.remove(COOKIES.accessToken)
         setUser(undefined)
     }
 
     useEffect(() => {
-        if (user) return
-        console.log("useAuth")
         const fetchUserInfo = async () => {
             const result = await UserService.getUserInfo()
             if (!result) {
