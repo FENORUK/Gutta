@@ -71,7 +71,7 @@ export default function RegisterForm(props) {
                 password: registerData.password,
             })
             alert("Registered successfully, please login again!")
-            navigate("/login")
+            navigate(0)
         } catch (error) {
             setErrors({
                 ...DEFAULT_ERROR_FORMAT,
