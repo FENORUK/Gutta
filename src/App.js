@@ -7,6 +7,7 @@ import { Favorites } from "./pages/Favorites"
 import { Personal } from "./pages/Personal"
 import { Shared } from "./pages/Shared"
 import { Recent } from "./pages/Recent"
+import { Document } from "./pages/Document"
 import { AuthGuard, PublicGuard } from "./components/Routes"
 import { authLoader } from "./utils/loaders"
 import { NoMatch } from "./pages/NoMatch"
@@ -62,6 +63,15 @@ const router = createBrowserRouter([
     {
         path: "*",
         element: <NoMatch />,
+    },
+    {
+        path: "/document",
+        loader: authLoader,
+        element: (
+            <AuthGuard>
+                <Document />
+            </AuthGuard>
+        ),
     },
 ])
 
