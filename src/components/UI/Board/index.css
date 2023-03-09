@@ -1,0 +1,5 @@
+.background {
+    background-image: radial-gradient(rgb(229 231 235) 2px, transparent 0);
+    background-size: 25px 25px;
+    background-position: -12px -12px;
+}

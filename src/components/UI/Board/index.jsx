@@ -1,103 +1,57 @@
-import { DndContext, useDroppable } from "@dnd-kit/core"
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
+import ReactGridLayout from "react-grid-layout"
 import {
-    MAX_HEIGHT,
-    MAX_WIDTH,
-    MIN_HEIGHT,
-    MIN_WIDTH,
+    COLUMNS_NUMBER,
+    DOCUMENT_WIDTH,
+    GRID_SIZE,
 } from "../../../utils/constants"
 import { Block } from "../Block"
-import { calculateCoordinate, getElements } from "./utils"
+import { getGridElements } from "./utils"
+import "/node_modules/react-grid-layout/css/styles.css"
+import "/node_modules/react-resizable/css/styles.css"
+import "./index.css"
 
 export function Board() {
-    const [items, setItems] = useState(getElements())
+    const containerRef = useRef()
+    const [containerWidth, setContainerWidth] = useState(DOCUMENT_WIDTH)
+    const [cols, setCols] = useState(COLUMNS_NUMBER)
+    const [items, setItems] = useState(getGridElements())
 
-    const { setNodeRef } = useDroppable({
-        id: "Board",
-    })
+    useEffect(() => {
+        if (!containerRef.current) return
+        const width = containerRef.current.offsetWidth
+        setContainerWidth(width)
+        setCols(Math.floor(width / GRID_SIZE))
+    }, [])
 
-    function handleDragEnd(event) {
-        const { active, delta } = event
-        const { x, y } = items[active.id].position
-        const { width, height } = items[active.id].size
-        const newX = calculateCoordinate({
-            position: x,
-            delta: delta.x,
-            itemSize: width,
-            min: MIN_WIDTH,
-            max: MAX_WIDTH,
-        })
-        const newY = calculateCoordinate({
-            position: y,
-            delta: delta.y,
-            itemSize: height,
-            min: MIN_HEIGHT,
-            max: MAX_HEIGHT,
-        })
-        setItems({
-            ...items,
-            [active.id]: {
-                ...items[active.id],
-                position: {
-                    x: newX,
-                    y: newY,
-                },
-            },
-        })
-    }
-
-    function handleResize(id, size) {
-        setItems({
-            ...items,
-            [id]: {
-                ...items[id],
-                size: {
-                    width: size.width,
-                    height: size.height,
-                },
-            },
-        })
+    const handleLayoutChanged = (data) => {
+        setItems(data)
     }
 
     return (
-        <div className="h-screen w-full relative">
-            <div
-                className="absolute top-0 left-0 w-full h-full"
-                style={{
-                    backgroundSize: "var(--grid-size) var(--grid-size)",
-                    backgroundImage: `repeating-linear-gradient(
-                        0deg,
-                        transparent,
-                        transparent calc(var(--grid-size) - 1px),
-                        #ddd calc(var(--grid-size) - 1px),
-                        #ddd var(--grid-size)
-                      ),
-                      repeating-linear-gradient(
-                        -90deg,
-                        transparent,
-                        transparent calc(var(--grid-size) - 1px),
-                        #ddd calc(var(--grid-size) - 1px),
-                        #ddd var(--grid-size)
-                      )`,
-                }}
-            ></div>
-            <div className="relative w-full h-full">
-                <DndContext onDragEnd={handleDragEnd}>
-                    <div ref={setNodeRef} className="h-full">
-                        {Object.entries(items).map(
-                            ([id, { position, size }]) => (
-                                <Block
-                                    id={id}
-                                    key={id}
-                                    position={position}
-                                    size={size}
-                                    onResize={handleResize}
-                                ></Block>
-                            )
-                        )}
+        <div
+            ref={containerRef}
+            className="w-full h-full min-h-screen bg-white background"
+        >
+            <ReactGridLayout
+                className="layout"
+                cols={cols}
+                rowHeight={GRID_SIZE}
+                width={containerWidth}
+                layout={items}
+                compactType={null}
+                margin={[0, 0]}
+                draggableHandle=".drag-handle"
+                onLayoutChange={handleLayoutChanged}
+            >
+                {items.map(({ i }) => (
+                    <div key={i} className="">
+                        <Block>
+                            <span className="text">{i}</span>
+                        </Block>
                     </div>
-                </DndContext>
-            </div>
+                ))}
+            </ReactGridLayout>
         </div>
     )
 }
