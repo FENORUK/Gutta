@@ -9,7 +9,7 @@ export function Document(props) {
                     <div className="h-12 w-full"></div>
                     <div className="h-24 w-full border border-t-2 border-x-0 border-gray-200"></div>
                 </div>
-                <div className=" px-12 pt-4">
+                <div className=" mx-12 mt-4">
                     <div className="w-full">
                         <Board />
                     </div>
