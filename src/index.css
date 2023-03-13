@@ -8,3 +8,7 @@
     --border-color: #f4f5f6;
     --grid-size: 30px;
 }
+
+.react-resizable-handle.react-resizable-handle-se {
+    opacity: 0;
+}
