@@ -1,7 +1,7 @@
 export const EMAIL_VALIDATION = /^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$/
 export const PASSWORD_VALIDATION = /^[a-zA-Z0-9]{6,}/
-export const MIN_WIDTH = 4
-export const MIN_HEIGHT = 2
+export const MIN_WIDTH = 6
+export const MIN_HEIGHT = 4
 export const GRID_SIZE = 25
 export const COLUMNS_NUMBER = 48
 export const DOCUMENT_WIDTH = 1200
@@ -22,6 +22,16 @@ export const PAGE_TITLES = {
     NOMATCH: "Not Found",
 }
 
+export const COLOR = [
+    { key: "gray", body: "bg-gray-300" },
+    { key: "red", body: "bg-red-100" },
+    { key: "blue", body: "bg-cyan-100" },
+    { key: "purple", body: "bg-fuchsia-100" },
+    { key: "orange", body: "bg-orange-200" },
+    { key: "lime", body: "bg-lime-200" },
+    { key: "white", body: "bg-white" },
+]
+
 export const MESSAGE = {
     REGISTER_SUCCEEDED: "Registered successfully, please login again!",
     DEFAULT_ERROR: "Something went wrong!",
@@ -31,3 +41,4 @@ export const MESSAGE = {
     PASSWORDS_NOT_THE_SAME: "Password and Confirm password must be the same",
     PAGES_NUMBER_REACH_MAXIMUM: "Pages number has reached the maximum",
 }
+export const DEFAULT_TEMP = { i: "temp" }
