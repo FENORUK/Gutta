@@ -6,9 +6,7 @@ import { IconButton } from "../../components/UI/IconButton"
 import { SideBar } from "../../components/UI/SideBar"
 import { useDrawer } from "../../hooks/useDrawer"
 import DocumentService from "../../services/DocumentService"
-import { toast } from "react-toastify"
-import { TOAST_CONFIG } from "../../utils/constants"
-import { CustomToastContainer } from "../../components/UI/CustomToastContainer"
+import { DEFAULT_TITLE } from "../../utils/constants"
 import "react-toastify/dist/ReactToastify.css"
 import { ReactComponent as LockIcon } from "../../assets/lock.svg"
 import {
@@ -23,6 +21,7 @@ import {
     ChatBubbleOvalLeftEllipsisIcon,
     StarIcon,
 } from "@heroicons/react/24/outline"
+import customToast from "../../utils/toast"
 
 const DRAWER_ID = "drawer-navigation"
 
@@ -37,11 +36,11 @@ export function Document() {
 
     useEffect(() => {
         const fetchDocuments = async () => {
-            const res = await DocumentService.getDocumentByID(docId)
-            if (!res) return
+            const response = await DocumentService.getDocumentByID(docId)
+            if (!response) return
             const {
                 data: { results },
-            } = res
+            } = response
             if (!results || !results.length) {
                 navigate("/not-found")
                 return
@@ -57,14 +56,14 @@ export function Document() {
         if (event.key === "Enter") {
             try {
                 const response = await DocumentService.updateDocument(docId, {
-                    name: tempDoc.name || "Untitled",
+                    name: tempDoc.name || DEFAULT_TITLE,
                 })
-                toast.success("Changed name successfully!", TOAST_CONFIG)
+                customToast.success("Changed name successfully!")
                 const updatedDoc = response.data.results
                 setDoc(updatedDoc)
                 setTempDoc(updatedDoc)
             } catch (error) {
-                toast.error(error.message, TOAST_CONFIG)
+                customToast.error(error.message)
                 setTempDoc(doc)
             }
             setShowNameInput(!showNameInput)
@@ -226,7 +225,6 @@ export function Document() {
                     hideBackGround={() => drawer.hide()}
                 />
             </div>
-            <CustomToastContainer />
         </div>
     )
 }

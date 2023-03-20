@@ -12,14 +12,26 @@ const documentService = () => {
     }
 
     return {
+        createNewDocument: async (data) => {
+            const headers = getHeaders()
+            if (!headers) return
+            try {
+                const apiResponse = await axios.post("document", data, {
+                    headers,
+                })
+                return apiResponse
+            } catch (error) {
+                throw error
+            }
+        },
         getDocumentByID: async (documentId) => {
             const headers = getHeaders()
             if (!headers) return
             try {
-                const apiRessponse = await axios.get(`document/${documentId}`, {
+                const apiResponse = await axios.get(`document/${documentId}`, {
                     headers,
                 })
-                return apiRessponse
+                return apiResponse
             } catch (error) {
                 throw error
             }
@@ -28,14 +40,14 @@ const documentService = () => {
             const headers = getHeaders()
             if (!headers) return
             try {
-                const apiRessponse = await axios.put(
+                const apiResponse = await axios.put(
                     `document/${documentId}`,
                     data,
                     {
                         headers,
                     }
                 )
-                return apiRessponse
+                return apiResponse
             } catch (error) {
                 throw error
             }
