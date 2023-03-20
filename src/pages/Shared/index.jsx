@@ -2,5 +2,10 @@ import React from "react"
 import { DefaultLayout } from "../../components/UI/Layout/DefaultLayout"
 
 export function Shared() {
-    return <DefaultLayout>Shared</DefaultLayout>
+    document.title = "Shared"
+    return (
+        <DefaultLayout>
+            <div className="pt-3 text-2xl">Shared</div>
+        </DefaultLayout>
+    )
 }

@@ -2,5 +2,10 @@ import React from "react"
 import { DefaultLayout } from "../../components/UI/Layout/DefaultLayout"
 
 export function Favorites() {
-    return <DefaultLayout>Favorites</DefaultLayout>
+    document.title = "Favourites"
+    return (
+        <DefaultLayout>
+            <div className="pt-3 text-2xl">Favorites</div>
+        </DefaultLayout>
+    )
 }
