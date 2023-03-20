@@ -21,7 +21,7 @@ const userService = () => {
                 })
                 return apiRessponse
             } catch (error) {
-                return
+                return error
             }
         },
     }

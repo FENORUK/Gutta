@@ -7,10 +7,11 @@ import { Favorites } from "./pages/Favorites"
 import { Personal } from "./pages/Personal"
 import { Shared } from "./pages/Shared"
 import { Recent } from "./pages/Recent"
-import { Document } from "./pages/Document"
 import { AuthGuard, PublicGuard } from "./components/Routes"
 import { authLoader } from "./utils/loaders"
 import { NoMatch } from "./pages/NoMatch"
+import { Document } from "./pages/Document"
+import "flowbite"
 
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL
 
@@ -61,17 +62,17 @@ const router = createBrowserRouter([
         ),
     },
     {
-        path: "*",
-        element: <NoMatch />,
-    },
-    {
-        path: "/document",
+        path: "/document/:docId",
         loader: authLoader,
         element: (
             <AuthGuard>
                 <Document />
             </AuthGuard>
         ),
+    },
+    {
+        path: "*",
+        element: <NoMatch />,
     },
 ])
 

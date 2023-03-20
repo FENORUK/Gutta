@@ -6,7 +6,11 @@
     margin: 0;
     padding: 0;
     --border-color: #f4f5f6;
-    --grid-size: 30px;
+    font-family: "Poppins-Regular";
+}
+
+.react-resizable-handle.react-resizable-handle-se {
+    opacity: 0;
 }
 
 .react-resizable-handle.react-resizable-handle-se {
