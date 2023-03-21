@@ -5,7 +5,7 @@ export const authService = {
         return apiRessponse
     },
     register: async (data) => {
-        const apiRessponse = await axios.post("auth/register", data)
-        return apiRessponse
+        const apiResponse = await axios.post("auth/register", data)
+        return apiResponse
     },
 }

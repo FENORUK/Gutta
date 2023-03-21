@@ -16,10 +16,10 @@ const userService = () => {
             const headers = getHeaders()
             if (!headers) return
             try {
-                const apiRessponse = await axios.get("auth/user-profile", {
+                const apiResponse = await axios.get("auth/user-profile", {
                     headers,
                 })
-                return apiRessponse
+                return apiResponse
             } catch (error) {
                 return error
             }

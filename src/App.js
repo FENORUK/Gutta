@@ -12,6 +12,7 @@ import { authLoader } from "./utils/loaders"
 import { NoMatch } from "./pages/NoMatch"
 import { Document } from "./pages/Document"
 import "flowbite"
+import { CustomToastContainer } from "./components/UI/CustomToastContainer"
 
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL
 
@@ -84,6 +85,7 @@ function App() {
                     <RouterProvider router={router} />
                 </AuthProvider>
             </CookiesProvider>
+            <CustomToastContainer />
         </div>
     )
 }
