@@ -48,7 +48,7 @@ const BUTTONS = [
 
 export function DefaultHeader() {
     return (
-        <div className="flex justify-end items-center h-14">
+        <div className="flex justify-end items-center h-14 bg-white">
             {BUTTONS.map(
                 ({
                     key,

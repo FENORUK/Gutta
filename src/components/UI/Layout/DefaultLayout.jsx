@@ -3,13 +3,13 @@ import { DefaultHeader } from "../Header/DefaultLayout"
 
 export const DefaultLayout = ({ children }) => {
     return (
-        <div className="relative w-full h-full">
-            <div className="h-full min-h-screen bg-gray-50">
+        <div className="w-full h-full bg-gray-50">
+            <div className="h-screen w-2/12 bg-gray-50 fixed">
                 <SideBar />
             </div>
-            <div className="absolute bg-white absolute top-0 right-0 h-full w-10/12 border border-gray-200 rounded-t-3xl">
+            <div className="ml-auto bg-white h-full min-h-screen w-10/12 border rounded-t-3xl">
                 <div className="px-12">
-                    <div className="border-b border-gray-200">
+                    <div className="border-b-2 border-gray-200 sticky top-px">
                         <DefaultHeader />
                     </div>
                     {children}

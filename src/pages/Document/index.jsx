@@ -216,7 +216,7 @@ export function Document() {
             </div>
             <div
                 id={DRAWER_ID}
-                className="fixed top-0 left-0 z-40 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white w-72"
+                className="fixed top-0 left-0 z-40 h-screen overflow-y-auto transition-transform -translate-x-full bg-white w-72"
                 tabIndex="-1"
                 aria-labelledby="drawer-navigation-label"
             >

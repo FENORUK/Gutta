@@ -24,6 +24,18 @@ const documentService = () => {
                 throw error
             }
         },
+        getPersonalDocuments: async () => {
+            const headers = getHeaders()
+            if (!headers) return
+            try {
+                const apiResponse = await axios.get("document/personal", {
+                    headers,
+                })
+                return apiResponse
+            } catch (error) {
+                throw error
+            }
+        },
         getDocumentByID: async (documentId) => {
             const headers = getHeaders()
             if (!headers) return
