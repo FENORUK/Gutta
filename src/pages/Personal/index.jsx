@@ -1,47 +1,55 @@
 import React, { useEffect, useState } from "react"
 import { PlusIcon } from "@heroicons/react/24/solid"
-import { useNavigate } from "react-router"
+import { useNavigate } from "react-router-dom"
 import { IconButton } from "../../components/UI/IconButton"
 import { DefaultLayout } from "../../components/UI/Layout/DefaultLayout"
 import DocumentService from "../../services/DocumentService"
-import { DEFAULT_TITLE } from "../../utils/constants"
+import { DEFAULT_TITLE, PAGE_TITLES } from "../../utils/constants"
 import customToast from "../../utils/toast"
 import { DefaultBody } from "../../components/UI/DefaultBody"
+import { loader } from "../../components/UI/Loader"
 
 export function Personal() {
-    document.title = "Personal"
+    document.title = PAGE_TITLES.PERSONAL
     const navigate = useNavigate()
     const [documentList, setDocumentList] = useState()
     useEffect(() => {
         const fetchDocuments = async () => {
-            try {
+            loader.emit("start")
+            const response = await DocumentService.getPersonalDocuments()
+            loader.emit("stop")
+            if (response.error) {
                 const {
-                    data: { results: listDoc },
-                } = await DocumentService.getPersonalDocuments()
-
-                setDocumentList(listDoc)
-            } catch (error) {
-                customToast.error(error.message)
+                    error: { message },
+                } = response
+                customToast.error(message)
+                return
             }
+            const { results: listDoc } = response
+            setDocumentList(listDoc)
         }
         fetchDocuments()
     }, [])
 
     const handleCreate = async () => {
-        try {
+        loader.emit("start")
+        const response = await DocumentService.createNewDocument({
+            name: DEFAULT_TITLE,
+        })
+        loader.emit("stop")
+        if (response.error) {
             const {
-                data: {
-                    results: { id },
-                },
-            } = await DocumentService.createNewDocument({
-                name: DEFAULT_TITLE,
-            })
-
-            navigate(`/document/${id}`)
-        } catch (error) {
-            customToast.error(error.message)
+                error: { message },
+            } = response
+            customToast.error(message)
+            return
         }
+        const {
+            results: { id },
+        } = response
+        navigate(`/document/${id}`)
     }
+
     return (
         <DefaultLayout>
             <div className="pt-3 pb-1.5 text-2xl sticky top-[58px] bg-white flex justify-between">

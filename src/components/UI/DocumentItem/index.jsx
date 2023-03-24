@@ -1,7 +1,7 @@
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid"
 import moment from "moment/moment"
 import React from "react"
-import { useNavigate } from "react-router"
+import { useNavigate } from "react-router-dom"
 import { IconButton } from "../IconButton"
 export const DocumentItem = (props) => {
     const navigate = useNavigate()

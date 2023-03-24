@@ -1,14 +1,15 @@
 import React, { useState } from "react"
 import LoginForm from "../components/Forms/Login/LoginForm"
 import RegisterForm from "../components/Forms/SignUp/RegisterForm"
+import { PAGE_TITLES } from "../utils/constants"
 
 const ROUTE = {
     login: {
-        title: "Login",
+        title: PAGE_TITLES.LOGIN,
         form: LoginForm,
     },
     register: {
-        title: "Sign Up",
+        title: PAGE_TITLES.REGISTER,
         form: RegisterForm,
     },
 }
@@ -26,7 +27,7 @@ export default function LoginPage() {
         <div className="h-screen bg-[url('assets/theme.jpg')] bg-cover bg-right-bottom">
             <div className="h-full w-1/2 bg-white shadow-[0_4px_44px_0px_rgba(0,0,0,0.25)] flex flex-col items-center justify-center">
                 <div className="h-12 w-12 bg-[url('assets/logo512.png')] bg-cover hover:cursor-pointer"></div>
-                <page.form onchange={handleStateChange} />
+                <page.form onChange={handleStateChange} />
             </div>
         </div>
     )

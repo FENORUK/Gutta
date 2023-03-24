@@ -13,6 +13,7 @@ import { NoMatch } from "./pages/NoMatch"
 import { Document } from "./pages/Document"
 import "flowbite"
 import { CustomToastContainer } from "./components/UI/CustomToastContainer"
+import { LoadingBar } from "./components/UI/Loader"
 
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL
 
@@ -80,6 +81,7 @@ const router = createBrowserRouter([
 function App() {
     return (
         <div className="App">
+            <LoadingBar />
             <CookiesProvider>
                 <AuthProvider>
                     <RouterProvider router={router} />

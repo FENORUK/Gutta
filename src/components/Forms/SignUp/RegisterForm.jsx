@@ -2,8 +2,13 @@ import React, { useState } from "react"
 import InputTag from "../../UI/InputTag"
 import Button from "../../UI/Button"
 import { authService } from "../../../services/authService"
-import { EMAIL_VALIDATION, PASSWORD_VALIDATION } from "../../../utils/constants"
-import { useNavigate } from "react-router-dom"
+import {
+    EMAIL_VALIDATION,
+    MESSAGE,
+    PASSWORD_VALIDATION,
+} from "../../../utils/constants"
+import customToast from "../../../utils/toast"
+import { loader } from "../../UI/Loader"
 
 const INPUTS = [
     {
@@ -25,10 +30,9 @@ const INPUTS = [
 const DEFAULT_ERROR_FORMAT = { email: "", password: "", confirmPassword: "" }
 
 export default function RegisterForm(props) {
-    const { onchange } = props
+    const { onChange } = props
     const [registerData, setRegisterData] = useState(DEFAULT_ERROR_FORMAT)
     const [errors, setErrors] = useState(DEFAULT_ERROR_FORMAT)
-    const navigate = useNavigate()
 
     const validateRegisterInput = (registerData) => {
         const { email, password, confirmPassword } = registerData
@@ -36,14 +40,13 @@ export default function RegisterForm(props) {
             ...DEFAULT_ERROR_FORMAT,
         }
         if (!EMAIL_VALIDATION.test(email)) {
-            errorDetail.email = "Invalid email"
+            errorDetail.email = MESSAGE.INVALID_EMAIL
         }
         if (!PASSWORD_VALIDATION.test(password)) {
-            errorDetail.password = "The password must be at least 6 characters"
+            errorDetail.password = MESSAGE.INVALID_PASSWORD_LENGTH
         }
         if (!(password === confirmPassword)) {
-            errorDetail.confirmPassword =
-                "Password and Confirm password must be the same"
+            errorDetail.confirmPassword = MESSAGE.PASSWORDS_NOT_THE_SAME
         }
         return errorDetail
     }
@@ -64,20 +67,27 @@ export default function RegisterForm(props) {
             return
         }
 
-        try {
-            await authService.register({
-                name: "",
-                email: registerData.email,
-                password: registerData.password,
-            })
-            alert("Registered successfully, please login again!")
-            navigate(0)
-        } catch (error) {
+        loader.emit("start")
+        const response = await authService.register({
+            name: "",
+            email: registerData.email,
+            password: registerData.password,
+        })
+        loader.emit("stop")
+
+        if (response.error) {
+            const {
+                error: { message },
+            } = response
             setErrors({
                 ...DEFAULT_ERROR_FORMAT,
-                email: error.response.data.errors.message,
+                email: message,
             })
+            return
         }
+
+        customToast.success(MESSAGE.REGISTER_SUCCEEDED)
+        onChange("login")
     }
 
     return (
@@ -90,7 +100,7 @@ export default function RegisterForm(props) {
                 Already have an account?{" "}
                 <span
                     className="hover:cursor-pointer text-[#175cff]"
-                    onClick={() => onchange("login")}
+                    onClick={() => onChange("login")}
                 >
                     Sign In
                 </span>

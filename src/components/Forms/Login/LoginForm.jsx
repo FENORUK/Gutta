@@ -2,9 +2,15 @@ import React, { useState } from "react"
 import Button from "../../UI/Button"
 import InputTag from "../../UI/InputTag"
 import { authService } from "../../../services/authService"
-import { EMAIL_VALIDATION, PASSWORD_VALIDATION } from "../../../utils/constants"
-import { useNavigate } from "react-router"
+import {
+    DEFAULT_PATH,
+    EMAIL_VALIDATION,
+    MESSAGE,
+    PASSWORD_VALIDATION,
+} from "../../../utils/constants"
+import { useNavigate } from "react-router-dom"
 import { COOKIES, cookies } from "../../../utils/cookies"
+import { loader } from "../../UI/Loader"
 
 const INPUTS = [
     {
@@ -21,7 +27,7 @@ const INPUTS = [
 const DEFAULT_ERROR_FORMAT = { email: "", password: "" }
 
 export default function LoginForm(props) {
-    const { onchange } = props
+    const { onChange } = props
     const [loginData, setLoginData] = useState(DEFAULT_ERROR_FORMAT)
     const [errors, setErrors] = useState(DEFAULT_ERROR_FORMAT)
     const navigate = useNavigate()
@@ -32,10 +38,10 @@ export default function LoginForm(props) {
             ...DEFAULT_ERROR_FORMAT,
         }
         if (!EMAIL_VALIDATION.test(email)) {
-            errorDetail.email = "Invalid email"
+            errorDetail.email = MESSAGE.INVALID_EMAIL
         }
         if (!PASSWORD_VALIDATION.test(password)) {
-            errorDetail.password = "The password must be at least 6 characters"
+            errorDetail.password = MESSAGE.INVALID_PASSWORD_LENGTH
         }
         return errorDetail
     }
@@ -55,29 +61,29 @@ export default function LoginForm(props) {
             setErrors(validateMessages)
             return
         }
+        loader.emit("start")
+        const response = await authService.login({
+            email: loginData.email,
+            password: loginData.password,
+        })
+        loader.emit("stop")
 
-        try {
-            const response = await authService.login({
-                email: loginData.email,
-                password: loginData.password,
-            })
-            cookies.set(
-                COOKIES.accessToken,
-                response.data.results.access_token,
-                {
-                    path: "/",
-                    expires: new Date(
-                        Date.now() + response.data.results.expires_in * 1000
-                    ),
-                }
-            )
-            navigate("/")
-        } catch (error) {
+        if (response.error) {
             setErrors({
                 ...DEFAULT_ERROR_FORMAT,
-                email: "No active account found with the given credentials",
+                email: MESSAGE.ACCOUNT_NOT_FOUND,
             })
+            return
         }
+
+        const {
+            results: { access_token, expires_in },
+        } = response
+        cookies.set(COOKIES.accessToken, access_token, {
+            path: DEFAULT_PATH,
+            expires: new Date(Date.now() + expires_in * 1000),
+        })
+        navigate(DEFAULT_PATH)
     }
 
     return (
@@ -90,7 +96,7 @@ export default function LoginForm(props) {
                 Don't have an account?{" "}
                 <span
                     className="hover:cursor-pointer text-[#175cff]"
-                    onClick={() => onchange("register")}
+                    onClick={() => onChange("register")}
                 >
                     Sign up for free
                 </span>

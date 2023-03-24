@@ -2,45 +2,25 @@ import React from "react"
 import { IconButton } from "../../IconButton"
 import {
     BellIcon,
-    CheckCircleIcon,
     MagnifyingGlassIcon,
     QuestionMarkCircleIcon,
-    UserPlusIcon,
 } from "@heroicons/react/24/solid"
 import clsx from "clsx"
-import { ReactComponent as NoteIcon } from "../../../../assets/note.svg"
 const BUTTONS = [
     {
         key: 0,
-        className: "px-3 mr-4 bg-white hover:bg-red-100 h-8 text-black",
-        icon: <UserPlusIcon />,
-        iconClassName: "mr-2",
-        description: "Refer a friends, get more blocks",
-    },
-    {
-        key: 1,
-        className: "px-3 h-8 text-gray-400 hover:text-black",
+        className: "px-4 h-8 text-gray-400 hover:text-black",
         icon: <MagnifyingGlassIcon />,
         iconClassName: "mr-2",
         description: "Search...",
     },
     {
-        key: 2,
-        title: "Quick Note",
-        icon: <NoteIcon />,
-    },
-    {
-        key: 3,
-        title: "Tasks",
-        icon: <CheckCircleIcon />,
-    },
-    {
-        key: 4,
+        key: 1,
         title: "Notifications",
         icon: <BellIcon />,
     },
     {
-        key: 5,
+        key: 2,
         title: "Help Center",
         icon: <QuestionMarkCircleIcon />,
     },

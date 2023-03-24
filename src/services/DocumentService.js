@@ -13,55 +13,47 @@ const documentService = () => {
 
     return {
         createNewDocument: async (data) => {
-            const headers = getHeaders()
-            if (!headers) return
             try {
                 const apiResponse = await axios.post("document", data, {
-                    headers,
+                    headers: getHeaders(),
                 })
                 return apiResponse
             } catch (error) {
-                throw error
+                return { error }
             }
         },
         getPersonalDocuments: async () => {
-            const headers = getHeaders()
-            if (!headers) return
             try {
                 const apiResponse = await axios.get("document/personal", {
-                    headers,
+                    headers: getHeaders(),
                 })
                 return apiResponse
             } catch (error) {
-                throw error
+                return { error }
             }
         },
         getDocumentByID: async (documentId) => {
-            const headers = getHeaders()
-            if (!headers) return
             try {
                 const apiResponse = await axios.get(`document/${documentId}`, {
-                    headers,
+                    headers: getHeaders(),
                 })
                 return apiResponse
             } catch (error) {
-                throw error
+                return { error }
             }
         },
         updateDocument: async (documentId, data) => {
-            const headers = getHeaders()
-            if (!headers) return
             try {
                 const apiResponse = await axios.put(
                     `document/${documentId}`,
                     data,
                     {
-                        headers,
+                        headers: getHeaders(),
                     }
                 )
                 return apiResponse
             } catch (error) {
-                throw error
+                return { error }
             }
         },
     }
