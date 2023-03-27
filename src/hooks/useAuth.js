@@ -17,7 +17,7 @@ export const useAuth = () => {
                 logout()
                 return
             }
-            setUser(result.data.results)
+            setUser(result.results)
         }
         fetchUserInfo()
     }, [])

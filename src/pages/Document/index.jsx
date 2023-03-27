@@ -6,13 +6,11 @@ import { IconButton } from "../../components/UI/IconButton"
 import { SideBar } from "../../components/UI/SideBar"
 import { useDrawer } from "../../hooks/useDrawer"
 import DocumentService from "../../services/DocumentService"
-import { DEFAULT_TITLE } from "../../utils/constants"
+import { DEFAULT_TITLE, PAGE_TITLES } from "../../utils/constants"
 import "react-toastify/dist/ReactToastify.css"
 import { ReactComponent as LockIcon } from "../../assets/lock.svg"
 import {
     ArrowUpTrayIcon,
-    ArrowUturnLeftIcon,
-    ArrowUturnRightIcon,
     Bars3Icon,
     PlusIcon,
     UserCircleIcon,
@@ -22,11 +20,12 @@ import {
     StarIcon,
 } from "@heroicons/react/24/outline"
 import customToast from "../../utils/toast"
+import { loader } from "../../components/UI/Loader"
 
 const DRAWER_ID = "drawer-navigation"
 
 export function Document() {
-    document.title = "Document"
+    document.title = PAGE_TITLES.DOCUMENT
     const { docId } = useParams()
     const navigate = useNavigate()
     const [doc, setDoc] = useState(undefined)
@@ -36,12 +35,12 @@ export function Document() {
 
     useEffect(() => {
         const fetchDocuments = async () => {
+            loader.emit("start")
             const response = await DocumentService.getDocumentByID(docId)
-            if (!response) return
-            const {
-                data: { results },
-            } = response
-            if (!results || !results.length) {
+            loader.emit("stop")
+
+            const { results } = response
+            if (!results || !results.length || response.error) {
                 navigate("/not-found")
                 return
             }
@@ -50,22 +49,35 @@ export function Document() {
             setTempDoc(currentDocument)
         }
         fetchDocuments()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [docId])
 
     const handleKeyDown = async (event) => {
         if (event.key === "Enter") {
-            try {
-                const response = await DocumentService.updateDocument(docId, {
-                    name: tempDoc.name || DEFAULT_TITLE,
-                })
-                customToast.success("Changed name successfully!")
-                const updatedDoc = response.data.results
-                setDoc(updatedDoc)
-                setTempDoc(updatedDoc)
-            } catch (error) {
-                customToast.error(error.message)
+            if (tempDoc.name === "") {
                 setTempDoc(doc)
+                setShowNameInput(!showNameInput)
+                return
             }
+            loader.emit("start")
+            const response = await DocumentService.updateDocument(docId, {
+                name: tempDoc.name,
+            })
+            loader.emit("stop")
+
+            if (response.error) {
+                const {
+                    error: { message },
+                } = response
+                customToast.error(message)
+                setTempDoc(doc)
+                return
+            }
+
+            customToast.success("Changed name successfully!")
+            const updatedDoc = response.results
+            setDoc(updatedDoc)
+            setTempDoc(updatedDoc)
             setShowNameInput(!showNameInput)
         }
     }
@@ -74,7 +86,7 @@ export function Document() {
         setTempDoc({ ...tempDoc, name: value })
     }
 
-    if (!doc) return <div>Loading...</div>
+    if (!doc) return <></>
 
     return (
         <div className="relative bg-gray-100 flex justify-center">
@@ -123,44 +135,30 @@ export function Document() {
                                         </div>
                                     )}
                                     <div className="relative flex pl-4 justify-center items-center">
-                                        <IconButton
-                                            className="rounded-none bg-white text-gray-400 hover:text-gray-400 w-8 m-0"
-                                            status="disabled"
-                                        >
-                                            <ArrowUturnLeftIcon className="w-4 h-4" />
-                                        </IconButton>
+                                        <div className="w-7 h-7 text-gray-400 text-2xl text-center">
+                                            |
+                                        </div>
 
                                         <IconButton
-                                            className="rounded-none bg-white text-gray-400 hover:text-gray-400 w-8 m-0 mr-8"
-                                            status="disabled"
-                                        >
-                                            <ArrowUturnRightIcon className="w-4 h-4" />
-                                        </IconButton>
-
-                                        <IconButton
-                                            className="bg-white hover:bg-gray-100 w-7 h-7 m-0 rounded-lg m-0.5"
+                                            className="bg-white hover:bg-gray-100 w-7 h-7 rounded-lg m-0.5"
                                             title="Comments"
                                         >
                                             <ChatBubbleOvalLeftEllipsisIcon className="w-4 h-4" />
                                         </IconButton>
 
                                         <IconButton
-                                            className="bg-white hover:bg-gray-100 w-7 h-7 m-0 rounded-lg m-0.5"
-                                            title="Add to Favourites"
+                                            className="bg-white hover:bg-gray-100 w-7 h-7 rounded-lg m-0.5"
+                                            title="Add to Favorites"
                                         >
                                             <StarIcon className="w-4 h-4" />
                                         </IconButton>
-
-                                        <div className="absolute text-gray-400 text-2xl">
-                                            |
-                                        </div>
                                     </div>
                                     {showNameInput && (
                                         <input
                                             autoFocus
                                             type="text"
                                             className="absolute border-none text-2xl p-0 focus:ring-0 focus:shadow-md"
-                                            placeholder="Untitled"
+                                            placeholder={DEFAULT_TITLE}
                                             value={tempDoc.name}
                                             onChange={(event) => {
                                                 handleInputChange(
@@ -169,6 +167,7 @@ export function Document() {
                                             }}
                                             onBlur={() => {
                                                 setShowNameInput(!showNameInput)
+                                                setTempDoc(doc)
                                             }}
                                             onKeyDown={handleKeyDown}
                                         />

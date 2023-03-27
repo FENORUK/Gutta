@@ -14,6 +14,7 @@ export const useDrawer = ({ id, shouldUpdate, options = {} }) => {
             ...options,
         })
         setDrawer(drawerInstance)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, shouldUpdate])
 
     return {
