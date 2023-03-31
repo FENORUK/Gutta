@@ -5,14 +5,13 @@ import { DefaultHeader } from "../../components/UI/Header/DefaultLayout"
 import { IconButton } from "../../components/UI/IconButton"
 import { SideBar } from "../../components/UI/SideBar"
 import { useDrawer } from "../../hooks/useDrawer"
-import DocumentService from "../../services/DocumentService"
+import DocumentService from "../../services/documentService"
 import { DEFAULT_TITLE, PAGE_TITLES } from "../../utils/constants"
 import "react-toastify/dist/ReactToastify.css"
 import { ReactComponent as LockIcon } from "../../assets/lock.svg"
 import {
     ArrowUpTrayIcon,
     Bars3Icon,
-    PlusIcon,
     UserCircleIcon,
 } from "@heroicons/react/24/solid"
 import {
@@ -21,17 +20,31 @@ import {
 } from "@heroicons/react/24/outline"
 import customToast from "../../utils/toast"
 import { loader } from "../../components/UI/Loader"
+import PageService from "../../services/pageService"
+import "./index.css"
+import { PageNavigation } from "../../components/UI/PageNavigation"
 
 const DRAWER_ID = "drawer-navigation"
+
+const fetchPages = async (docId) => {
+    loader.emit("start")
+    const response = await PageService.getDocumentPages(docId)
+    loader.emit("stop")
+    const { results } = response
+    return results
+}
 
 export function Document() {
     document.title = PAGE_TITLES.DOCUMENT
     const { docId } = useParams()
-    const navigate = useNavigate()
+
     const [doc, setDoc] = useState(undefined)
-    const { drawer } = useDrawer({ id: DRAWER_ID, shouldUpdate: doc })
-    const [showNameInput, setShowNameInput] = useState(false)
     const [tempDoc, setTempDoc] = useState({})
+    const [showNameInput, setShowNameInput] = useState(false)
+
+    const { drawer } = useDrawer({ id: DRAWER_ID, shouldUpdate: doc })
+    const navigate = useNavigate()
+    const [listPages, setListPages] = useState([])
 
     useEffect(() => {
         const fetchDocuments = async () => {
@@ -45,6 +58,8 @@ export function Document() {
                 return
             }
             const [currentDocument] = results
+            const newlistPages = await fetchPages(docId)
+            setListPages(newlistPages)
             setDoc(currentDocument)
             setTempDoc(currentDocument)
         }
@@ -52,7 +67,7 @@ export function Document() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [docId])
 
-    const handleKeyDown = async (event) => {
+    const handleDocumentNameInputKeyDown = async (event) => {
         if (event.key === "Enter") {
             if (tempDoc.name === "") {
                 setTempDoc(doc)
@@ -82,21 +97,17 @@ export function Document() {
         }
     }
 
-    const handleInputChange = (value) => {
-        setTempDoc({ ...tempDoc, name: value })
-    }
-
     if (!doc) return <></>
 
     return (
-        <div className="relative bg-gray-100 flex justify-center">
-            <div className="bg-white w-[1298px]  rounded-t-3xl border border-solid border-gray-200">
+        <div className="relative bg-gray-50 flex justify-center">
+            <div className="bg-white w-[1298px]  rounded-t-3xl border border-solid border-gray-100">
                 <div className="w-full px-12">
-                    <div className="flex justify-between items-center border-b border-gray-200">
+                    <div className="flex justify-between items-center border-b border-gray-100">
                         <div className="flex">
                             <IconButton
                                 onClick={() => drawer.show()}
-                                className="px-2 mr-3"
+                                className="px-2 mr-3 justify-center"
                             >
                                 <Bars3Icon className="w-4 h-4" />
                             </IconButton>
@@ -161,21 +172,24 @@ export function Document() {
                                             placeholder={DEFAULT_TITLE}
                                             value={tempDoc.name}
                                             onChange={(event) => {
-                                                handleInputChange(
-                                                    event.target.value
-                                                )
+                                                setTempDoc({
+                                                    ...tempDoc,
+                                                    name: event.target.value,
+                                                })
                                             }}
                                             onBlur={() => {
                                                 setShowNameInput(!showNameInput)
                                                 setTempDoc(doc)
                                             }}
-                                            onKeyDown={handleKeyDown}
+                                            onKeyDown={
+                                                handleDocumentNameInputKeyDown
+                                            }
                                         />
                                     )}
                                 </div>
                                 <div className="flex">
                                     <IconButton
-                                        className="text-sm px-3 text-black bg-red-100 hover:bg-red-300"
+                                        className="text-sm px-3 text-black bg-red-100 hover:bg-red-300 justify-center"
                                         title="Private to only me"
                                     >
                                         <LockIcon className="w-4 h-4 mr-2.5" />
@@ -191,19 +205,11 @@ export function Document() {
                                 </div>
                             </div>
                         </div>
-                        <div className="mt-4 h-full flex flex-row">
-                            <div className="h-8 w-min border border-b-0 px-2">
-                                Page_layouts
-                            </div>
-                            <div className="w-8 border-b flex items-center justify-center ml-2 text-gray-400 hover:text-black">
-                                <IconButton
-                                    className="p-0 h-6 w-6 items-center justify-center"
-                                    title="Add a page"
-                                >
-                                    <PlusIcon className="w-4 h-4" />
-                                </IconButton>
-                            </div>
-                            <div className="w-full border-b"></div>
+                        <div className="mt-4 h-full page-container">
+                            <PageNavigation
+                                docId={docId}
+                                listPages={listPages}
+                            />
                         </div>
                     </div>
                 </div>

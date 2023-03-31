@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import UserService from "../services/UserService"
+import UserService from "../services/userService"
 import { COOKIES, cookies } from "../utils/cookies"
 
 export const useAuth = () => {

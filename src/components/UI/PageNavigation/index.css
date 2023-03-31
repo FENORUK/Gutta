@@ -1,0 +1,22 @@
+.container {
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+}
+.container::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
+.button-scroll {
+    margin-left: 20px;
+}
+.button-scroll::before {
+    position: absolute;
+    content: "";
+    top: -4px;
+    left: 0px;
+    height: 32px;
+    width: 20px;
+    z-index: 10;
+    background-color: transparent;
+    transition: opacity 0.25s ease-in-out;
+    box-shadow: -4px 0 10px rgba(40, 66, 91, 0.08);
+}
