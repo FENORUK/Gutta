@@ -11,6 +11,7 @@ import { PopoverMenu } from "../../PopoverMenu"
 import { usePopover } from "../../../../hooks/usePopover"
 import { useNavigate } from "react-router-dom"
 import { AuthContext } from "../../../../contexts/AuthContext"
+import { PATH } from "../../../../utils/constants"
 const BUTTONS = [
     {
         key: 0,
@@ -76,7 +77,7 @@ export function DefaultHeader() {
                     onClick={() => {
                         popover.hide()
                         logout()
-                        navigate("/login")
+                        navigate(PATH.DEFAULT)
                     }}
                 >
                     <ArrowRightOnRectangleIcon className="w-4 h-4 mr-2" />

@@ -1,4 +1,6 @@
-export const EMAIL_VALIDATION = /^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$/
+import { StarIcon, UserIcon, UsersIcon } from "@heroicons/react/24/solid"
+import { generatePath } from "react-router-dom"
+export const EMAIL_VALIDATION = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/
 export const PASSWORD_VALIDATION = /^[a-zA-Z0-9]{6,}/
 export const MIN_WIDTH = 6
 export const MIN_HEIGHT = 4
@@ -10,14 +12,29 @@ export const MINIMUM_DISTANCE = 15
 export const MAXIMUM_PAGES_NUMBER = 16
 
 export const DEFAULT_TITLE = "Untitled"
-export const DEFAULT_PATH = "/"
+
+const WORKSPACE_BARE_PATH = "/workspace/:workspaceId"
+export const PATH = {
+    DEFAULT: "/",
+    DOCUMENT: { DEFAULT: "/document/:docId" },
+    WORKSPACE: {
+        DEFAULT: WORKSPACE_BARE_PATH,
+        PERSONAL: generatePath(WORKSPACE_BARE_PATH, {
+            workspaceId: "personal",
+        }),
+        SHARED: generatePath(WORKSPACE_BARE_PATH, {
+            workspaceId: "shared",
+        }),
+        FAVORITE: generatePath(WORKSPACE_BARE_PATH, {
+            workspaceId: "favorite",
+        }),
+    },
+    NOT_FOUND: "/not-found",
+}
+
 export const PAGE_TITLES = {
     LOGIN: "Login",
     REGISTER: "Sign Up",
-    PERSONAL: "Personal",
-    FAVORITES: "Favorites",
-    RECENT: "Recent",
-    SHARED: "Shared",
     DOCUMENT: "Document",
     NOMATCH: "Not Found",
 }
@@ -42,3 +59,18 @@ export const MESSAGE = {
     PAGES_NUMBER_REACH_MAXIMUM: "Pages number has reached the maximum",
 }
 export const DEFAULT_TEMP = { i: "temp" }
+
+export const PAGES = {
+    personal: {
+        Icon: UserIcon,
+        name: "Personal",
+    },
+    shared: {
+        Icon: UsersIcon,
+        name: "Shared",
+    },
+    favorite: {
+        Icon: StarIcon,
+        name: "Favorites",
+    },
+}

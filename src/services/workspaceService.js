@@ -1,7 +1,7 @@
 import axios from "axios"
 import { COOKIES, cookies } from "../utils/cookies"
 
-const pageService = () => {
+const workspaceService = () => {
     const getHeaders = () => {
         const accessToken = cookies.get(COOKIES.accessToken)
         return accessToken
@@ -11,25 +11,31 @@ const pageService = () => {
             : undefined
     }
     return {
-        createNewPage: async ({ documentId, pageName }) => {
+        getAllWorkspace: async () => {
             try {
-                const apiResponse = await axios.post(
-                    `document/${documentId}/page`,
-                    { name: pageName },
-                    {
-                        headers: getHeaders(),
-                    }
-                )
+                const apiResponse = await axios.get("workspace", {
+                    headers: getHeaders(),
+                })
                 return apiResponse
             } catch (error) {
                 return { error }
             }
         },
-        updatePage: async ({ documentId, pageId, name }) => {
+        createNewWorkspace: async (data) => {
+            try {
+                const apiResponse = await axios.post("workspace", data, {
+                    headers: getHeaders(),
+                })
+                return apiResponse
+            } catch (error) {
+                return { error }
+            }
+        },
+        updateWorkspace: async ({ workspaceId, data }) => {
             try {
                 const apiResponse = await axios.put(
-                    `document/${documentId}/page/${pageId}`,
-                    { name: name },
+                    `workspace/${workspaceId}`,
+                    data,
                     {
                         headers: getHeaders(),
                     }
@@ -39,24 +45,10 @@ const pageService = () => {
                 return { error }
             }
         },
-        deletePage: async ({ documentId, pageId }) => {
+        deleteWorkspace: async (workspaceId) => {
             try {
                 const apiResponse = await axios.delete(
-                    `document/${documentId}/page/${pageId}`,
-                    {
-                        headers: getHeaders(),
-                    }
-                )
-                return apiResponse
-            } catch (error) {
-                return { error }
-            }
-        },
-        getPageByDocumentId: async ({ documentId }) => {
-            try {
-                const apiResponse = await axios.get(
-                    `document/${documentId}/page`,
-
+                    `workspace/${workspaceId}`,
                     {
                         headers: getHeaders(),
                     }
@@ -69,6 +61,6 @@ const pageService = () => {
     }
 }
 
-const PageService = pageService()
+const WorkspaceService = workspaceService()
 
-export default PageService
+export default WorkspaceService

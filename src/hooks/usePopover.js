@@ -33,6 +33,10 @@ export const usePopover = () => {
             triggerId === popoverOptions.triggerId &&
             targetId === popoverOptions.targetId
         ) {
+            if (popover.isVisible()) {
+                popover.hide()
+                return
+            }
             popover.show()
             return
         }
@@ -43,7 +47,7 @@ export const usePopover = () => {
         const newPopover = createPopover({
             targetId: targetId,
             triggerId: triggerId,
-            options,
+            options: options,
         })
         newPopover.show()
         setPopover(newPopover)

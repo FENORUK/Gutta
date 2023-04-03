@@ -22,9 +22,9 @@ const documentService = () => {
                 return { error }
             }
         },
-        getPersonalDocuments: async () => {
+        getDocuments: async (path) => {
             try {
-                const apiResponse = await axios.get("document/personal", {
+                const apiResponse = await axios.get(`document${path}`, {
                     headers: getHeaders(),
                 })
                 return apiResponse
@@ -40,6 +40,16 @@ const documentService = () => {
                         headers: getHeaders(),
                     }
                 )
+                return apiResponse
+            } catch (error) {
+                return { error }
+            }
+        },
+        queryDocument: async (data) => {
+            try {
+                const apiResponse = await axios.get(`document?${data}`, data, {
+                    headers: getHeaders(),
+                })
                 return apiResponse
             } catch (error) {
                 return { error }

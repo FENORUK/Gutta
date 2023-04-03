@@ -4,7 +4,7 @@ import React from "react"
 export const IconButton = (props) => {
     const {
         className = "h-8 px-2 mx-1 text-gray-400 hover:text-black justify-center",
-        status = "",
+        disabled,
         children,
         title,
         onClick,
@@ -18,7 +18,7 @@ export const IconButton = (props) => {
                 className
             )}
             id={id}
-            disabled={status}
+            disabled={disabled}
             title={title}
             onClick={onClick}
         >

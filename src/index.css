@@ -9,6 +9,22 @@
     font-family: "Poppins-Regular";
 }
 
+::-webkit-scrollbar {
+    width: 9px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(249 250 251);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(229 231 235);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(156 163 175);
+}
+
 .react-resizable-handle.react-resizable-handle-se {
     opacity: 0;
 }
