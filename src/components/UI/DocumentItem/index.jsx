@@ -7,11 +7,12 @@ export const DocumentItem = (props) => {
     const navigate = useNavigate()
     const {
         document: { id, name, created_at },
+        onMenuClick,
     } = props
 
     return (
         <div
-            className="h-80 w-full hover:cursor-pointer group"
+            className="h-72 w-full hover:cursor-pointer group"
             onClick={() => {
                 navigate(`/document/${id}`)
             }}
@@ -28,8 +29,10 @@ export const DocumentItem = (props) => {
                 </div>
                 <div>
                     <IconButton
+                        id={id}
                         onClick={(event) => {
                             event.stopPropagation()
+                            onMenuClick(id)
                         }}
                         className="h-8 px-2 m-0 bg-gray-200 opacity-0 group-hover:opacity-100"
                     >

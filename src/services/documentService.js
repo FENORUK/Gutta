@@ -56,6 +56,19 @@ const documentService = () => {
                 return { error }
             }
         },
+        deleteDocument: async (documentId) => {
+            try {
+                const apiResponse = await axios.delete(
+                    `document/${documentId}`,
+                    {
+                        headers: getHeaders(),
+                    }
+                )
+                return apiResponse
+            } catch (error) {
+                return { error }
+            }
+        },
     }
 }
 

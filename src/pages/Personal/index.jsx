@@ -1,49 +1,21 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 import { PlusIcon } from "@heroicons/react/24/solid"
 import { useNavigate } from "react-router-dom"
 import { IconButton } from "../../components/UI/IconButton"
 import { DefaultLayout } from "../../components/UI/Layout/DefaultLayout"
-import DocumentService from "../../services/documentService"
-import { DEFAULT_TITLE, PAGE_TITLES } from "../../utils/constants"
-import customToast from "../../utils/toast"
+import { PAGE_TITLES } from "../../utils/constants"
 import { DefaultBody } from "../../components/UI/DefaultBody"
-import { loader } from "../../components/UI/Loader"
+import { useDocument } from "../../hooks/useDocument"
 
 export function Personal() {
     document.title = PAGE_TITLES.PERSONAL
     const navigate = useNavigate()
-    const [documentList, setDocumentList] = useState()
-    useEffect(() => {
-        const fetchDocuments = async () => {
-            loader.emit("start")
-            const response = await DocumentService.getPersonalDocuments()
-            loader.emit("stop")
-            if (response.error) {
-                const {
-                    error: { message },
-                } = response
-                customToast.error(message)
-                return
-            }
-            const { results: listDoc } = response
-            setDocumentList(listDoc)
-        }
-        fetchDocuments()
-    }, [])
+    const { documents, createDocument, renameDocument, deleteDocument } =
+        useDocument()
 
     const handleCreate = async () => {
-        loader.emit("start")
-        const response = await DocumentService.createNewDocument({
-            name: DEFAULT_TITLE,
-        })
-        loader.emit("stop")
-        if (response.error) {
-            const {
-                error: { message },
-            } = response
-            customToast.error(message)
-            return
-        }
+        const response = await createDocument()
+        if (!response) return
         const {
             results: { id },
         } = response
@@ -63,7 +35,11 @@ export function Personal() {
                 </IconButton>
             </div>
             <div className="w-full h-full py-6">
-                <DefaultBody documents={documentList} />
+                <DefaultBody
+                    documents={documents}
+                    renameDocument={renameDocument}
+                    deleteDocument={deleteDocument}
+                />
             </div>
         </DefaultLayout>
     )
