@@ -9,7 +9,7 @@ export const DefaultLayout = ({ children }) => {
             </div>
             <div className="ml-auto bg-white h-full min-h-screen w-10/12 border rounded-t-3xl">
                 <div className="px-12">
-                    <div className="border-b-2 border-gray-200 sticky top-px">
+                    <div className="border-b-2 border-gray-200 sticky top-px z-10">
                         <DefaultHeader />
                     </div>
                     {children}
