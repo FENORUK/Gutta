@@ -16,23 +16,16 @@ import {
 } from "@heroicons/react/24/solid"
 import {
     ChatBubbleOvalLeftEllipsisIcon,
-    StarIcon,
+    StarIcon as OutlineStarIcon,
 } from "@heroicons/react/24/outline"
+import { StarIcon as SolidStarIcon } from "@heroicons/react/24/solid"
+
 import customToast from "../../utils/toast"
 import { loader } from "../../components/UI/Loader"
-import PageService from "../../services/pageService"
 import "./index.css"
 import { PageNavigation } from "../../components/UI/PageNavigation"
 
 const DRAWER_ID = "drawer-navigation"
-
-const fetchPages = async (docId) => {
-    loader.emit("start")
-    const response = await PageService.getDocumentPages(docId)
-    loader.emit("stop")
-    const { results } = response
-    return results
-}
 
 export function Document() {
     document.title = PAGE_TITLES.DOCUMENT
@@ -41,10 +34,10 @@ export function Document() {
     const [doc, setDoc] = useState(undefined)
     const [tempDoc, setTempDoc] = useState({})
     const [showNameInput, setShowNameInput] = useState(false)
+    const [favorites, setFavorites] = useState(false)
 
     const { drawer } = useDrawer({ id: DRAWER_ID, shouldUpdate: doc })
     const navigate = useNavigate()
-    const [listPages, setListPages] = useState([])
 
     useEffect(() => {
         const fetchDocuments = async () => {
@@ -52,16 +45,16 @@ export function Document() {
             const response = await DocumentService.getDocumentByID(docId)
             loader.emit("stop")
 
-            const { results } = response
-            if (!results || !results.length || response.error) {
+            if (response.error) {
                 navigate("/not-found")
                 return
             }
-            const [currentDocument] = results
-            const newlistPages = await fetchPages(docId)
-            setListPages(newlistPages)
-            setDoc(currentDocument)
-            setTempDoc(currentDocument)
+            const {
+                results: { 0: document, is_favourite },
+            } = response
+            setFavorites(is_favourite)
+            setDoc(document)
+            setTempDoc(document)
         }
         fetchDocuments()
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -90,7 +83,7 @@ export function Document() {
             }
 
             customToast.success("Changed name successfully!")
-            const updatedDoc = response.results
+            const updatedDoc = { ...doc, ...response.results }
             setDoc(updatedDoc)
             setTempDoc(updatedDoc)
             setShowNameInput(!showNameInput)
@@ -151,17 +144,21 @@ export function Document() {
                                         </div>
 
                                         <IconButton
-                                            className="bg-white hover:bg-gray-100 w-7 h-7 rounded-lg m-0.5"
+                                            className="bg-white hover:bg-gray-100 w-7 h-7 rounded-lg m-0.5 justify-center"
                                             title="Comments"
                                         >
                                             <ChatBubbleOvalLeftEllipsisIcon className="w-4 h-4" />
                                         </IconButton>
 
                                         <IconButton
-                                            className="bg-white hover:bg-gray-100 w-7 h-7 rounded-lg m-0.5"
+                                            className="bg-white hover:bg-gray-100 w-7 h-7 rounded-lg m-0.5 justify-center"
                                             title="Add to Favorites"
                                         >
-                                            <StarIcon className="w-4 h-4" />
+                                            {favorites ? (
+                                                <SolidStarIcon className="w-4 h-4" />
+                                            ) : (
+                                                <OutlineStarIcon className="w-4 h-4" />
+                                            )}
                                         </IconButton>
                                     </div>
                                     {showNameInput && (
@@ -208,7 +205,7 @@ export function Document() {
                         <div className="mt-4 h-full page-container">
                             <PageNavigation
                                 docId={docId}
-                                listPages={listPages}
+                                listPages={doc.pages}
                             />
                         </div>
                     </div>

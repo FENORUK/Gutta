@@ -8,7 +8,6 @@ import { StarIcon } from "@heroicons/react/24/outline"
 import { ModalBox } from "../ModalBox"
 import { useModal } from "../../../hooks/useModal"
 import { DeleteModal } from "../ModalBox/DeleteModal"
-import { useDocument } from "../../../hooks/useDocument"
 
 const MENU_ID = "document-menu"
 const RENAME_MODAL_ID = "rename-input"
