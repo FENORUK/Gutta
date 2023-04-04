@@ -1,0 +1,9 @@
+.active-page::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    border-top: 3px solid white;
+    z-index: 4;
+    width: 100%;
+}

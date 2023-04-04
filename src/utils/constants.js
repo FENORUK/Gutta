@@ -5,7 +5,10 @@ export const MIN_HEIGHT = 2
 export const GRID_SIZE = 25
 export const COLUMNS_NUMBER = 48
 export const DOCUMENT_WIDTH = 1200
+export const PAGE_SCROLL_WIDTH = 1080
 export const MINIMUM_DISTANCE = 15
+export const MAXIMUM_PAGES_NUMBER = 16
+
 export const DEFAULT_TITLE = "Untitled"
 export const DEFAULT_PATH = "/"
 export const PAGE_TITLES = {
@@ -26,4 +29,5 @@ export const MESSAGE = {
     INVALID_EMAIL: "Invalid email",
     INVALID_PASSWORD_LENGTH: "The password must be at least 6 characters",
     PASSWORDS_NOT_THE_SAME: "Password and Confirm password must be the same",
+    PAGES_NUMBER_REACH_MAXIMUM: "Pages number has reached the maximum",
 }
