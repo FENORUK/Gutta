@@ -1,11 +1,17 @@
 import React from "react"
 import { IconButton } from "../../IconButton"
 import {
+    ArrowRightOnRectangleIcon,
     BellIcon,
     MagnifyingGlassIcon,
     QuestionMarkCircleIcon,
 } from "@heroicons/react/24/solid"
 import clsx from "clsx"
+import { PopoverMenu } from "../../PopoverMenu"
+import { usePopover } from "../../../../hooks/usePopover"
+import { useAuth } from "../../../../hooks/useAuth"
+import { useNavigate } from "react-router-dom"
+import { useEffect } from "react"
 const BUTTONS = [
     {
         key: 0,
@@ -25,8 +31,14 @@ const BUTTONS = [
         icon: <QuestionMarkCircleIcon />,
     },
 ]
+const USER_AVATAR_ID = "user-image"
+const USER_SETTING_MENU_ID = "user-menu"
 
 export function DefaultHeader() {
+    const { logout } = useAuth()
+    const { popover, triggerPopover } = usePopover()
+    const navigate = useNavigate()
+    const { user } = useAuth()
     return (
         <div className="flex justify-end items-center h-14 bg-white">
             {BUTTONS.map(
@@ -46,7 +58,33 @@ export function DefaultHeader() {
                     </IconButton>
                 )
             )}
-            <div className="w-8 h-8 bg-cover bg-[url('assets/theme.jpg')] rounded-2xl cursor-pointer ml-2"></div>
+            <div
+                id={USER_AVATAR_ID}
+                className="w-8 h-8 rounded-2xl flex items-center justify-center cursor-pointer ml-2 bg-red-300 font-bold text-sm text-white"
+                onClick={() => {
+                    triggerPopover({
+                        targetId: USER_SETTING_MENU_ID,
+                        triggerId: USER_AVATAR_ID,
+                    })
+                }}
+            >
+                <span className="uppercase tracking-wider">
+                    {(user?.email || "").slice(0, 2)}
+                </span>
+            </div>
+            <PopoverMenu id={USER_SETTING_MENU_ID}>
+                <IconButton
+                    className="rounded-lg text-gray-400 bg-white hover:text-black hover:bg-gray-100 w-full px-3 py-1.5"
+                    onClick={() => {
+                        popover.hide()
+                        logout()
+                        navigate("/login")
+                    }}
+                >
+                    <ArrowRightOnRectangleIcon className="w-4 h-4 mr-2" />
+                    Sign out
+                </IconButton>
+            </PopoverMenu>
         </div>
     )
 }
