@@ -34,9 +34,12 @@ const documentService = () => {
         },
         getDocumentByID: async (documentId) => {
             try {
-                const apiResponse = await axios.get(`document/${documentId}`, {
-                    headers: getHeaders(),
-                })
+                const apiResponse = await axios.get(
+                    `document/${documentId}/all`,
+                    {
+                        headers: getHeaders(),
+                    }
+                )
                 return apiResponse
             } catch (error) {
                 return { error }
