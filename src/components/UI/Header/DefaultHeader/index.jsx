@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useContext } from "react"
 import { IconButton } from "../../IconButton"
 import {
     ArrowRightOnRectangleIcon,
@@ -9,9 +9,8 @@ import {
 import clsx from "clsx"
 import { PopoverMenu } from "../../PopoverMenu"
 import { usePopover } from "../../../../hooks/usePopover"
-import { useAuth } from "../../../../hooks/useAuth"
 import { useNavigate } from "react-router-dom"
-import { useEffect } from "react"
+import { AuthContext } from "../../../../contexts/AuthContext"
 const BUTTONS = [
     {
         key: 0,
@@ -35,10 +34,9 @@ const USER_AVATAR_ID = "user-image"
 const USER_SETTING_MENU_ID = "user-menu"
 
 export function DefaultHeader() {
-    const { logout } = useAuth()
+    const { user, logout } = useContext(AuthContext)
     const { popover, triggerPopover } = usePopover()
     const navigate = useNavigate()
-    const { user } = useAuth()
     return (
         <div className="flex justify-end items-center h-14 bg-white">
             {BUTTONS.map(
