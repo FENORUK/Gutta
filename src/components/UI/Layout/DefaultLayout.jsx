@@ -1,5 +1,5 @@
 import { SideBar } from "../SideBar"
-import { DefaultHeader } from "../Header/DefaultLayout"
+import { DefaultHeader } from "../Header/DefaultHeader"
 
 export const DefaultLayout = ({ children }) => {
     return (

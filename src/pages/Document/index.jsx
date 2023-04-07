@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { Board } from "../../components/UI/Board"
-import { DefaultHeader } from "../../components/UI/Header/DefaultLayout"
+import { DefaultHeader } from "../../components/UI/Header/DefaultHeader"
 import { IconButton } from "../../components/UI/IconButton"
 import { SideBar } from "../../components/UI/SideBar"
 import { useDrawer } from "../../hooks/useDrawer"
