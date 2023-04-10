@@ -62,6 +62,20 @@ const pageService = () => {
                 return { error }
             }
         },
+        getPageByDocumentId: async () => {
+            try {
+                const apiResponse = await axios.get(
+                    `/page?document_id=2512ff8e-42dc-423c-9e2b-59102ce7b969`,
+
+                    {
+                        headers: getHeaders(),
+                    }
+                )
+                return apiResponse
+            } catch (error) {
+                return { error }
+            }
+        },
     }
 }
 

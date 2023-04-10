@@ -212,7 +212,7 @@ export function Document() {
                 </div>
                 <div className=" mx-12 mt-4">
                     <div className="w-full">
-                        <Board />
+                        <Board listPages={doc.pages}/>
                     </div>
                 </div>
             </div>
