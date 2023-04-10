@@ -45,9 +45,10 @@ export const DefaultBody = ({ documents, renameDocument, deleteDocument }) => {
                         onClick={() => {
                             popover.hide()
                             setTempDocumentName(
-                                documents.filter(
-                                    (x) => x.id === selectedDocument
-                                )[0].name
+                                documents.find(
+                                    (document) =>
+                                        document.id === selectedDocument
+                                )?.name
                             )
                             triggerModal({ targetId: RENAME_MODAL_ID })
                         }}

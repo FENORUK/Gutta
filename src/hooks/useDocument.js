@@ -55,14 +55,16 @@ export const useDocument = () => {
             customToast.error(message)
             return
         }
-        const newListDocuments = documents.filter((x) => x.id !== docId)
+        const newListDocuments = documents.filter(
+            (document) => document.id !== docId
+        )
         setDocuments(newListDocuments)
         customToast.success(_.get(response, "results.message"))
     }
 
     const renameDocument = async ({ docId, newName }) => {
-        const document = documents.filter((x) => x.id === docId)[0]
-        if (newName === "" || newName === document.name) {
+        const document = documents.find((document) => document.id === docId)
+        if (!newName || !document || newName === document.name) {
             return
         }
         loader.emit("start")
