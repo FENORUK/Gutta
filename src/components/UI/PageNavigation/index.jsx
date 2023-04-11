@@ -1,31 +1,29 @@
 import React, { useState } from "react"
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid"
-import _ from "lodash"
 import { usePopover } from "../../../hooks/usePopover"
-import PageService from "../../../services/pageService"
-import { MAXIMUM_PAGES_NUMBER, MESSAGE } from "../../../utils/constants"
-import customToast from "../../../utils/toast"
 import { IconButton } from "../IconButton"
-import { loader } from "../Loader"
 import { PageTab } from "../PageTab"
 import { PopoverMenu } from "../PopoverMenu"
 import { useModal } from "../../../hooks/useModal"
 import "./index.css"
 import { DeleteModal } from "../ModalBox/DeleteModal"
 import { ScrollContainer } from "./ScrollContainer"
+import { usePage } from "../../../hooks/usePage"
 
 const POPOVER_ADD_ID = "popover-add"
 const POPOVER_PAGE_ID = "popover-page"
 const BUTTON_ADD_ID = "button-popover"
 const DELETE_MODAL_ID = "button-delete"
 
-export const PageNavigation = (props) => {
-    const { docId, listPages } = props
-
+export const PageNavigation = ({
+    docId,
+    listPages,
+    activePageId,
+    setActivePageId,
+}) => {
     const [showRenameInput, setShowRenameInput] = useState(false)
-    const [pages, setPages] = useState([...listPages])
-    const [activePage, setActivePage] = useState(listPages[0]?.id)
-    const [selectedPage, setSelectedPage] = useState("")
+    const { pages, createPage, renamePage, deletePage } = usePage(listPages)
+    const [selectedPageId, setSelectedPageId] = useState("")
     const [tempPageName, setTempPageName] = useState("")
 
     const { popover, triggerPopover } = usePopover()
@@ -35,83 +33,30 @@ export const PageNavigation = (props) => {
         if (event.key === "Enter") {
             popover.hide()
             if (tempPageName === "") return
-            if (pages.length === MAXIMUM_PAGES_NUMBER) {
-                setTempPageName("")
-                customToast.error(MESSAGE.PAGES_NUMBER_REACH_MAXIMUM)
-                return
-            }
-            loader.emit("start")
-            const response = await PageService.createNewPage(
-                docId,
-                tempPageName
-            )
-            loader.emit("stop")
-
-            if (response.error) {
-                const {
-                    error: { message },
-                } = response
-                customToast.error(message)
-                setTempPageName("")
-                return
-            }
-            setPages([...pages, response.results])
-            setActivePage(
-                _.get(response, "results.id", pages[pages.length - 1].id)
-            )
+            const newPageId = await createPage({
+                docId: docId,
+                pageName: tempPageName,
+            })
             setTempPageName("")
+            setActivePageId(newPageId)
         }
     }
 
     const handleRenamePageInputKeyDown = async (event) => {
         if (event.key === "Enter") {
             popover.hide()
-            const page = pages.find((x) => x.id === selectedPage)
-            if (tempPageName === "" || tempPageName === page.id) {
-                setTempPageName("")
-                return
-            }
-            loader.emit("start")
-            const response = await PageService.updatePage({
-                documentId: docId,
-                pageId: selectedPage,
-                name: tempPageName,
+            renamePage({
+                docId: docId,
+                selectedPageId: selectedPageId,
+                newName: tempPageName,
             })
-            loader.emit("stop")
-
-            if (response.error) {
-                const {
-                    error: { message },
-                } = response
-                customToast.error(message)
-                setTempPageName("")
-                return
-            }
-            setPages(
-                pages.map((item) => {
-                    return item.id === selectedPage ? response.results : item
-                })
-            )
             setTempPageName("")
         }
     }
 
-    const deletePage = async (pageId) => {
-        loader.emit("start")
-        const response = await PageService.deletePage(pageId)
-        loader.emit("stop")
-
-        if (response.error) {
-            const {
-                error: { message },
-            } = response
-            customToast.error(message)
-            return
-        }
-        const newListPage = pages.filter((x) => x.id !== pageId)
-        setPages(newListPage)
-        if (activePage === pageId) setActivePage(newListPage[0].id)
-        customToast.success(_.get(response, "results.message"))
+    const handleDeletePage = async (pageId) => {
+        const newListPage = await deletePage({ pageId: pageId })
+        if (activePageId === pageId) setActivePageId(newListPage[0]?.id)
     }
 
     return (
@@ -128,7 +73,7 @@ export const PageNavigation = (props) => {
                         })
                     },
                 }}
-                activePage={activePage}
+                activePageId={activePageId}
                 itemsCount={pages.length}
             >
                 {pages &&
@@ -137,11 +82,11 @@ export const PageNavigation = (props) => {
                             key={id}
                             id={id}
                             name={name}
-                            isActive={id === activePage}
-                            onClick={setActivePage}
+                            isActive={id === activePageId}
+                            onClick={setActivePageId}
                             onMenuClick={(pageId) => {
                                 setShowRenameInput(false)
-                                setSelectedPage(pageId)
+                                setSelectedPageId(pageId)
                                 triggerPopover({
                                     targetId: POPOVER_PAGE_ID,
                                     triggerId: pageId,
@@ -159,8 +104,9 @@ export const PageNavigation = (props) => {
                             onClick={() => {
                                 setShowRenameInput(true)
                                 setTempPageName(
-                                    pages.find((x) => x.id === selectedPage)
-                                        .name
+                                    pages.find(
+                                        (page) => page.id === selectedPageId
+                                    )?.name
                                 )
                             }}
                         >
@@ -215,7 +161,7 @@ export const PageNavigation = (props) => {
                 }}
                 onDelete={() => {
                     modal.hide()
-                    deletePage(selectedPage)
+                    handleDeletePage(selectedPageId)
                 }}
             />
         </div>

@@ -12,7 +12,7 @@ export const ScrollContainer = ({
     children,
     addButtonProps,
     itemsCount,
-    activePage,
+    activePageId,
 }) => {
     const scrollRef = useRef()
     const [scrollRefLeft, setScrollRefLeft] = useState(0)
@@ -25,12 +25,12 @@ export const ScrollContainer = ({
     }, [itemsCount])
 
     useEffect(() => {
-        const element = document.getElementById(activePage + "_p")
+        const element = document.getElementById(activePageId + "_p")
         const elementOffsetLeft = element.offsetLeft
 
         setScrollRefLeft(elementOffsetLeft)
         scrollTo({ left: elementOffsetLeft })
-    }, [activePage])
+    }, [activePageId])
 
     const scrollTo = ({ left }) => {
         setScrollRefLeft(left)

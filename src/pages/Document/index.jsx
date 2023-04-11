@@ -36,6 +36,8 @@ export function Document() {
     const [showNameInput, setShowNameInput] = useState(false)
     const [favorites, setFavorites] = useState(false)
 
+    const [activePageId, setActivePageId] = useState(undefined)
+
     const { drawer } = useDrawer({ id: DRAWER_ID, shouldUpdate: doc })
     const navigate = useNavigate()
 
@@ -55,6 +57,7 @@ export function Document() {
             setFavorites(is_favourite)
             setDoc(document)
             setTempDoc(document)
+            setActivePageId(document.pages[0].id)
         }
         fetchDocuments()
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -206,6 +209,8 @@ export function Document() {
                             <PageNavigation
                                 docId={docId}
                                 listPages={doc.pages}
+                                activePageId={activePageId}
+                                setActivePageId={setActivePageId}
                             />
                         </div>
                     </div>
