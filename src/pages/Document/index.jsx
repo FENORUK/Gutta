@@ -25,8 +25,12 @@ import { loader } from "../../components/UI/Loader"
 import "./index.css"
 import { PageNavigation } from "../../components/UI/PageNavigation"
 import { useWorkspace } from "../../hooks/useWorkspace"
+import { usePopover } from "../../hooks/usePopover"
+import { PopoverShare } from "./PopoverShare"
 
 const DRAWER_ID = "drawer-navigation"
+const SHARE_MENU_ID = "menu-id"
+const BUTTON_SHARE_ID = "share-button"
 
 export function Document() {
     document.title = PAGE_TITLES.DOCUMENT
@@ -45,6 +49,7 @@ export function Document() {
     const [activePageId, setActivePageId] = useState(undefined)
 
     const { drawer } = useDrawer({ id: DRAWER_ID, shouldUpdate: doc })
+    const { popover, triggerPopover } = usePopover()
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -255,8 +260,15 @@ export function Document() {
                                 </div>
                                 <div className="flex">
                                     <IconButton
+                                        id={BUTTON_SHARE_ID}
                                         className="text-sm px-3 text-black bg-red-100 hover:bg-red-300 justify-center"
                                         title="Private to only me"
+                                        onClick={() => {
+                                            triggerPopover({
+                                                targetId: SHARE_MENU_ID,
+                                                triggerId: BUTTON_SHARE_ID,
+                                            })
+                                        }}
                                     >
                                         <LockIcon className="w-4 h-4 mr-2.5" />
                                         Share
@@ -303,6 +315,12 @@ export function Document() {
                     workspaces={workspaces}
                 />
             </div>
+            <PopoverShare
+                id={SHARE_MENU_ID}
+                onSubmit={(email) => {
+                    popover.hide()
+                }}
+            />
         </div>
     )
 }
