@@ -4,26 +4,22 @@ import { ImageContent } from "./ImageContent"
 import { TaskContent } from "./TaskContent"
 import { ContentItem } from "./ContentItem"
 import { ChevronDownIcon } from "@heroicons/react/24/outline"
-import {
-    getCurrentMaxHeightBlock,
-    addContent,
-    updateContent,
-} from "./helper"
+import { getCurrentMaxHeightBlock, addContent, updateContent } from "./helper"
 import { BlockContext } from "../../../contexts/BlockContext"
 
 export const Content = ({ contents, setContents, onExpandBlock }) => {
     const { height } = useContext(BlockContext)
     const [selectedOption, setSelectedOption] = useState("text")
-    const contentsCount = contents.length
-    const imagesCount = contents.filter((item) => item.type === "image").length
+    const contentsCount = contents?.length
+    const imagesCount = contents?.filter((item) => item.type === "image").length
 
     const deleteContent = (id) => {
-        setContents(contents.filter((content) => content.id !== id))
+        setContents(contents?.filter((content) => content.id !== id))
     }
 
     const handlerAddContent = ({ id, name, type, store_url, checked }) => {
         setContents((prevContents) =>
-        addContent(prevContents, {
+            addContent(prevContents, {
                 id,
                 name,
                 type,
@@ -33,7 +29,12 @@ export const Content = ({ contents, setContents, onExpandBlock }) => {
         )
     }
 
-    const handlerUpdateContent = ({ contentId, newName, newChecked, newUrl }) => {
+    const handlerUpdateContent = ({
+        contentId,
+        newName,
+        newChecked,
+        newUrl,
+    }) => {
         setContents((prevContents) =>
             updateContent(prevContents, {
                 contentId,
@@ -45,7 +46,7 @@ export const Content = ({ contents, setContents, onExpandBlock }) => {
     }
 
     const showContents = () => {
-        return contents.map((content) => {
+        return contents?.map((content) => {
             return (
                 <div key={content.id}>
                     <ContentItem

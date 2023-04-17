@@ -119,7 +119,7 @@ export function TaskContent({
     }
 
     const checkInput = (event) => {
-        const value = event.target.value.trim()
+        const value = event.target.value
         setInputTask(value)
     }
 
@@ -174,7 +174,7 @@ export function TaskContent({
                 placeholder="Add item"
                 onKeyDown={name ? updateNameTask : createTaskContent}
                 className={clsx(
-                    `w-full ${color} text-xs px-1 py-0 border-none focus:ring-0 rounded-lg focus:outline-0 h-6 overflow-hidden $`,
+                    `w-full ${color} text-xs px-1 py-0 border-none focus:ring-0 rounded-lg focus:outline-0 h-6 overflow-hidden`,
                     isChecked ? "text-neutral-500 line-through" : ""
                 )}
             />

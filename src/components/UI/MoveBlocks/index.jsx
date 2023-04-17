@@ -2,10 +2,14 @@ import React, { useContext } from "react"
 import BlockService from "../../../services/blockService"
 import { BlockContext } from "../../../contexts/BlockContext"
 import { loader } from "../Loader"
+import "./index.css"
 import { handlerError } from "../../../helper/helper"
+import RealtimeService from "../../../services/realtimeService"
+import { extractBlockId } from "../../../helper/helper"
 
 export function MoveBlock() {
-    const { listPages, deleteBlock, docId,blockId } = useContext(BlockContext)
+    const { listPages, deleteBlock, docId, socketId, blockId } =
+        useContext(BlockContext)
 
     const handleChangePage = async (pageId) => {
         deleteBlock(blockId)
@@ -15,6 +19,10 @@ export function MoveBlock() {
         })
         loader.emit("stop")
         handlerError(response)
+        await RealtimeService.sendData("updatePageBlock", docId, {
+            socketId: socketId,
+            blockId: extractBlockId(blockId),
+        })
     }
 
     return (

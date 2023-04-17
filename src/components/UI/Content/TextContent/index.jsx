@@ -7,6 +7,7 @@ import { useContext } from "react"
 import { BlockContext } from "../../../../contexts/BlockContext"
 import { getCurrentMaxHeightBlock } from "../helper"
 import { handlerError } from "../../../../helper/helper"
+import { realTimeCreateContent } from "../helper"
 
 export const TextContent = ({
     name,
@@ -19,8 +20,16 @@ export const TextContent = ({
     handleUpdateContent,
 }) => {
     const [inputContext, setInputContext] = useState(name || "")
-    const { docId, color, setSelectedContent, height, blockId } =
-        useContext(BlockContext)
+    const {
+        docId,
+        color,
+        setSelectedContent,
+        height,
+        socketId,
+        block,
+        blockId,
+    } = useContext(BlockContext)
+    let listContents = block.contents
 
     const currentMaxHeightBlock = getCurrentMaxHeightBlock({
         contentsCount,
@@ -51,12 +60,36 @@ export const TextContent = ({
             store_url,
             block_id: blockId,
         })
-
+        listContents = [
+            ...listContents,
+            {
+                id,
+                name,
+                position,
+                type,
+                store_url,
+                block_id: blockId,
+            },
+        ]
         setInputContext("")
 
         if (height < TEXT_EXPAND + currentMaxHeightBlock) {
             onExpandBlock(TEXT_EXPAND)
+            realTimeCreateContent({
+                docId: docId,
+                socketId: socketId,
+                blockId: blockId,
+                listContents: listContents,
+                height: height + TEXT_EXPAND,
+            })
         }
+        realTimeCreateContent({
+            docId: docId,
+            socketId: socketId,
+            blockId: blockId,
+            listContents: listContents,
+            height: height,
+        })
     }
 
     const updateTextContent = async (event) => {
@@ -124,7 +157,7 @@ export const TextContent = ({
                 onChange={checkInput}
                 value={inputContext}
                 placeholder="Write here"
-                className={`placeholder ${color} text-xs w-full p-0 border-none focus:ring-0 rounded-lg focus:outline-0 h-full overflow-hidden`}
+                className={`${color} text-xs w-full p-0 border-none focus:ring-0 rounded-lg focus:outline-0 h-full overflow-hidden`}
             />
             {inputContext === "" ? (
                 <div className="absolute text-gray-400 cursor-pointer right-0 flex items-center">

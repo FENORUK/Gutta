@@ -8,11 +8,16 @@ export function extractValues(str) {
     return [Number(first), Number(last)]
 }
 
-export function handlerError(response){
+export function handlerError(response) {
     if (response.error) {
         customToast.error(response.error.message)
         return
     }
+}
+
+export function extractBlockId(string) {
+    const blockId = string.split("_")
+    return blockId[0]
 }
 
 export const convertCoordinates = (startPoint, endPoint) => {

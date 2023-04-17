@@ -1,5 +1,8 @@
 import { BLOCK_EXPAND, IMAGE_HEIGHT } from "../../../utils/constants"
 
+import { extractBlockId } from "../../../helper/helper"
+import RealtimeService from "../../../services/realtimeService"
+
 export const addContent = (
     prevContents,
     { id, name, type, store_url, checked }
@@ -36,4 +39,19 @@ export const updateContent = (
 
 export const getCurrentMaxHeightBlock = ({ contentsCount, imagesCount }) => {
     return contentsCount + BLOCK_EXPAND + imagesCount * IMAGE_HEIGHT
+}
+
+export async function realTimeCreateContent({
+    docId,
+    socketId,
+    blockId,
+    listContents,
+    height,
+}) {
+    await RealtimeService.sendData("createContent", docId, {
+        socketId: socketId,
+        blockId: extractBlockId(blockId),
+        listContents: listContents,
+        height: height,
+    })
 }

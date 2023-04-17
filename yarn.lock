@@ -7620,7 +7620,7 @@ punycode@^2.1.0, punycode@^2.1.1:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.3.0.tgz#f67fa67c94da8f4d0cfff981aee4118064199b8f"
   integrity sha512-rRV+zQD8tVFys26lAGR9WUuS4iUAngJScM+ZRSKtvl5tKeZ2t5bvdNFdNHBW9FWR4guGHlgmsZ1G7BSm2wTbuA==
 
-pusher-js@^8.0.1:
+pusher-js@^8.0.2:
   version "8.0.2"
   resolved "https://registry.yarnpkg.com/pusher-js/-/pusher-js-8.0.2.tgz#8fe3e2a90bda4bd1aa68f25dd644ffa0ac4dbd0d"
   integrity sha512-LLWUHLxraa2ro3iKKOg1cLcg7Qoz9NZyxQ+uwTGDEDNtLqsaD5pUK3zbWtMHPmav5d5E0bqpjuSc3y9ycqMtjA==

@@ -2,7 +2,7 @@ import React, { useContext } from "react"
 import { BlockContext } from "../../../contexts/BlockContext"
 import { COLOR } from "../../../utils/constants"
 
-export function Tile() {
+export function Tile({ title, showTitle }) {
     const { updateColor, blockId } = useContext(BlockContext)
 
     return (
@@ -16,7 +16,9 @@ export function Tile() {
                         <div
                             key={body}
                             className={`${body} w-4 h-4 px-2 inline-block border border-gray-300 mx-2 rounded-lg`}
-                            onClick={() => updateColor(body, blockId)}
+                            onClick={() =>
+                                updateColor(body, blockId, title, showTitle)
+                            }
                             style={{ cursor: "grab" }}
                         ></div>
                     ))}

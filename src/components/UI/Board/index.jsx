@@ -28,15 +28,20 @@ import {
 import { loader } from "../Loader"
 import { UpLoadImage } from "../UpLoadImage"
 import { PreViewImage } from "../PreViewImage"
+import RealtimeService from "../../../services/realtimeService"
+import { extractBlockId } from "../../../helper/helper"
 
 export const Board = ({
     docId,
-    activePageId,
-    setSelectedContent,
-    selectedContent,
+    channel,
+    socketId,
     listPages,
+    activePageId,
+    selectedContent,
+    setSelectedContent,
 }) => {
     const containerRef = useRef()
+    const test = useRef()
     const [blocks, setBlocks] = useState([])
     const [cols, setCols] = useState(COLUMNS_NUMBER)
     const [previewImage, setPreviewImage] = useState([])
@@ -46,6 +51,133 @@ export const Board = ({
     const [containerWidth, setContainerWidth] = useState(DOCUMENT_WIDTH)
 
     let temp = DEFAULT_TEMP
+    useEffect(() => {
+        channel.bind("createBlock", function (data) {
+            if (socketId !== data.message.data.socketId) {
+                const newBlocks = [...blocks, data.message.data.newBlock]
+                setBlocks(newBlocks)
+            }
+        })
+
+        channel.bind("updateBlocks", function (data) {
+            if (socketId !== data.message.data.socketId) {
+                const newBlocks = data.message.data.newBlocks
+                const listBlocks = blocks.map((block) => {
+                    const mappedBlock = newBlocks.find(
+                        (socketBlock) =>
+                            extractBlockId(socketBlock.id) ===
+                            extractBlockId(block.i)
+                    )
+                    if (!mappedBlock) {
+                        return block
+                    }
+                    const [x, y] = extractValues(mappedBlock.position)
+                    const [w, h] = extractValues(mappedBlock.size)
+                    return {
+                        ...block,
+                        x,
+                        y,
+                        w,
+                        h,
+                    }
+                })
+                setBlocks(listBlocks)
+            }
+        })
+
+        channel.bind("updateTitleBlock", function (data) {
+            const newBlock = data.message.data
+            if (socketId !== newBlock.socketId) {
+                const listBlocks = blocks.map((block) => {
+                    if (
+                        extractBlockId(block.i) ===
+                        extractBlockId(newBlock.blockId)
+                    ) {
+                        block = {
+                            ...block,
+                            i: `${block.i}_${Date.now()}`,
+                            title: newBlock.title,
+                            color: newBlock.color,
+                        }
+                    }
+                    return block
+                })
+                setBlocks(listBlocks)
+            }
+        })
+
+        channel.bind("updateStateTitleBlock", function (data) {
+            const newBlock = data.message.data
+            if (socketId !== newBlock.socketId) {
+                const listBlocks = blocks.map((block) => {
+                    if (
+                        extractBlockId(block.i) ===
+                        extractBlockId(newBlock.blockId)
+                    ) {
+                        block = {
+                            ...block,
+                            i: `${block.i}_${Date.now()}`,
+                            isTitleHidden: newBlock.is_title_hidden,
+                            title: newBlock.title,
+                            color: newBlock.color,
+                        }
+                    }
+                    return block
+                })
+                setBlocks(listBlocks)
+            }
+        })
+
+        channel.bind("updateColorBlock", function (data) {
+            const newBlock = data.message.data
+            if (socketId !== newBlock.socketId) {
+                const listBlocks = blocks.map((block) => {
+                    if (
+                        extractBlockId(block.i) ===
+                        extractBlockId(newBlock.blockId)
+                    ) {
+                        block = {
+                            ...block,
+                            i: `${block.i}_${Date.now()}`,
+                            color: newBlock.color,
+                            title: newBlock.title,
+                            isTitleHidden: !newBlock.isTitleHidden,
+                        }
+                    }
+                    return block
+                })
+                setBlocks(listBlocks)
+            }
+        })
+
+        channel.bind("updatePageBlock", function (data) {
+            const newBlock = data.message.data
+            if (socketId !== newBlock.socketId) {
+                deleteBlock(newBlock.blockId)
+            }
+        })
+
+        channel.bind("createContent", function (data) {
+            const newBlock = data.message.data
+            if (socketId !== newBlock.socketId) {
+                const listBlocks = blocks.map((block) => {
+                    if (
+                        extractBlockId(block.i) ===
+                        extractBlockId(newBlock.blockId)
+                    ) {
+                        block = {
+                            ...block,
+                            i: `${block.i}_${Date.now()}`,
+                            contents: newBlock.listContents,
+                            h: newBlock.height,
+                        }
+                    }
+                    return block
+                })
+                setBlocks(listBlocks)
+            }
+        })
+    }, [blocks])
 
     useEffect(() => {
         if (!containerRef.current) return
@@ -157,6 +289,22 @@ export const Board = ({
             },
         ]
         setBlocks(newBlocks)
+        await RealtimeService.sendData("createBlock", docId, {
+            socketId: socketId,
+            newBlock: {
+                i: id,
+                title: null,
+                color: "bg-white",
+                isTitleHidden: 0,
+                contents: [],
+                x: x,
+                y: y,
+                w: width,
+                h: height,
+                minH: MIN_HEIGHT,
+                minW: MIN_WIDTH,
+            },
+        })
         setMouseDownCoords(null)
         temp = DEFAULT_TEMP
     }
@@ -202,14 +350,19 @@ export const Board = ({
     const showBlocks = () => {
         return blocks.map((block, index) => {
             return (
-                <div key={block.i}>
+                <div key={block.i} data-grid={block}>
                     <BlockProvider
                         docId={docId}
                         height={block.h}
+                        channel={channel}
+                        socketId={socketId}
                         blockId={block.i}
+                        title={block.title}
                         color={block.color}
+                        isTitleHidden={block.isTitleHidden}
                         listPages={listPages}
                         deleteBlock={deleteBlock}
+                        block={block}
                         selectedContent={selectedContent}
                         setPreviewImage={setPreviewImage}
                         setShowPreviewImage={setShowPreviewImage}
@@ -250,6 +403,9 @@ export const Board = ({
 
             for (const updatingBlock of layout) {
                 const { i, x, y, w, h } = updatingBlock
+
+                if (i === "temp") checkUpdate = false
+                
                 const mappedBlock = blocks.find((block) => block.i === i)
 
                 if (!mappedBlock) {
@@ -276,6 +432,10 @@ export const Board = ({
                 })
                 loader.emit("stop")
                 handlerError(response)
+                await RealtimeService.sendData("updateBlocks", docId, {
+                    socketId: socketId,
+                    newBlocks: changes,
+                })
             }
         },
         [blocks, docId, setBlocks]
@@ -290,6 +450,7 @@ export const Board = ({
             onClick={handleMouseUp}
         >
             <ReactGridLayout
+                ref={test}
                 className="placeDrag"
                 cols={cols}
                 rowHeight={GRID_SIZE}

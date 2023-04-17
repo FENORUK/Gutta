@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid"
 import { usePopover } from "../../../hooks/usePopover"
 import { IconButton } from "../IconButton"
@@ -17,13 +17,31 @@ const DELETE_MODAL_ID = "button-delete"
 
 export const PageNavigation = ({
     docId,
+    channel,
+    socketId,
     listPages,
     activePageId,
     isOnlyViewPages,
     setActivePageId,
 }) => {
     const [showRenameInput, setShowRenameInput] = useState(false)
-    const { pages, createPage, renamePage, deletePage } = usePage(listPages)
+
+    const { pages, createPage, renamePage, deletePage } = usePage(
+        listPages,
+        socketId,
+        channel
+    )
+
+    useEffect(() => {
+        channel.bind("page", function (data) {
+            if (socketId !== data.message.data.socketId) {
+                const newPage = data.message.data
+                if (activePageId === newPage.pageId)
+                    setActivePageId(newPage.listPages[0]?.id)
+            }
+        })
+    },[])
+
     const [selectedPageId, setSelectedPageId] = useState("")
     const [tempPageName, setTempPageName] = useState("")
 
