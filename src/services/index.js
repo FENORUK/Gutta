@@ -1,5 +1,5 @@
 import axios, { HttpStatusCode } from "axios"
-import _ from "lodash"
+import get from "lodash/get"
 import { MESSAGE } from "../utils/constants"
 
 axios.interceptors.request.use(
@@ -19,10 +19,10 @@ axios.interceptors.response.use(
         if (error.response) {
             const { status } = error.response
             if (status === HttpStatusCode.Forbidden) {
-                window.location.replace("/login")
+                window.location.replace("/")
             }
             return Promise.reject({
-                message: _.get(
+                message: get(
                     error,
                     "response.data.errors.message",
                     MESSAGE.DEFAULT_ERROR
@@ -30,7 +30,7 @@ axios.interceptors.response.use(
             })
         }
         return Promise.reject({
-            message: _.get(error, "message", MESSAGE.DEFAULT_ERROR),
+            message: get(error, "message", MESSAGE.DEFAULT_ERROR),
         })
     }
 )

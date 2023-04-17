@@ -1,16 +1,17 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import Button from "../../UI/Button"
 import InputTag from "../../UI/InputTag"
 import { authService } from "../../../services/authService"
 import {
-    DEFAULT_PATH,
     EMAIL_VALIDATION,
     MESSAGE,
     PASSWORD_VALIDATION,
+    PATH,
 } from "../../../utils/constants"
 import { useNavigate } from "react-router-dom"
 import { COOKIES, cookies } from "../../../utils/cookies"
 import { loader } from "../../UI/Loader"
+import { AuthContext } from "../../../contexts/AuthContext"
 
 const INPUTS = [
     {
@@ -31,6 +32,7 @@ export default function LoginForm(props) {
     const [loginData, setLoginData] = useState(DEFAULT_ERROR_FORMAT)
     const [errors, setErrors] = useState(DEFAULT_ERROR_FORMAT)
     const navigate = useNavigate()
+    const { fetchUserInfo } = useContext(AuthContext)
 
     const validateLoginInput = (loginData) => {
         const { email, password } = loginData
@@ -80,10 +82,12 @@ export default function LoginForm(props) {
             results: { access_token, expires_in },
         } = response
         cookies.set(COOKIES.accessToken, access_token, {
-            path: DEFAULT_PATH,
+            path: PATH.DEFAULT,
             expires: new Date(Date.now() + expires_in * 1000),
         })
-        navigate(DEFAULT_PATH)
+
+        fetchUserInfo()
+        navigate(PATH.WORKSPACE.PERSONAL)
     }
 
     return (
@@ -91,7 +95,7 @@ export default function LoginForm(props) {
             className="w-96 px-2.5 flex flex-col items-center"
             onSubmit={handleLogin}
         >
-            <p className="mt-4 mb-2 text-4xl font-bold">Welcome to xtiles</p>
+            <p className="mt-4 mb-2 text-4xl font-bold">Welcome to Gutta</p>
             <p className="mb-4">
                 Don't have an account?{" "}
                 <span

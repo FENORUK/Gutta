@@ -23,10 +23,10 @@ const blockService = () => {
             }
         },
 
-        getBlockByPageId: async (pageId) => {
+        getBlockByPageId: async ({ documentId, pageId }) => {
             try {
                 const apiResponse = await axios.get(
-                    `/page/8a5f03ff-1875-4bf3-a3f4-aef1264e3bcc/block`,
+                    `document/${documentId}/page/${pageId}/block`,
                     {
                         headers: getHeaders(),
                     }

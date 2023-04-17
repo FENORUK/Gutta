@@ -5,7 +5,7 @@ import {
     ChevronRightIcon,
     PlusIcon,
 } from "@heroicons/react/24/solid"
-import _ from "lodash"
+import get from "lodash/get"
 import { PAGE_SCROLL_WIDTH } from "../../../utils/constants"
 
 export const ScrollContainer = ({
@@ -20,13 +20,13 @@ export const ScrollContainer = ({
 
     useEffect(() => {
         setIsOverflow(
-            _.get(scrollRef, "current.scrollWidth", 0) >= PAGE_SCROLL_WIDTH
+            get(scrollRef, "current.scrollWidth", 0) >= PAGE_SCROLL_WIDTH
         )
     }, [itemsCount])
 
     useEffect(() => {
         const element = document.getElementById(activePageId + "_p")
-        const elementOffsetLeft = element.offsetLeft
+        const elementOffsetLeft = element?.offsetLeft
 
         setScrollRefLeft(elementOffsetLeft)
         scrollTo({ left: elementOffsetLeft })
@@ -58,7 +58,7 @@ export const ScrollContainer = ({
                                 onClick={() => {
                                     scrollTo({ left: 0 })
                                 }}
-                                status={scrollRefLeft === 0 ? "disabled" : ""}
+                                disabled={scrollRefLeft === 0}
                             >
                                 <ChevronLeftIcon className="w-4 h-4" />
                             </IconButton>
@@ -71,11 +71,9 @@ export const ScrollContainer = ({
                                         left: scrollRef.current.scrollWidth,
                                     })
                                 }}
-                                status={
+                                disabled={
                                     scrollRefLeft ===
                                     scrollRef.current.scrollWidth
-                                        ? "disabled"
-                                        : ""
                                 }
                             >
                                 <ChevronRightIcon className="w-4 h-4" />

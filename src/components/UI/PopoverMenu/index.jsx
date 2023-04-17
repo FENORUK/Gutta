@@ -6,7 +6,7 @@ export const PopoverMenu = (props) => {
     return (
         <div
             className={clsx(
-                "absolute z-10 invisible transition-opacity border border-gray-200 p-2 bg-white shadow-lg rounded-lg",
+                "absolute z-10 invisible transition-opacity border border-gray-200 p-1.5 bg-white shadow-lg rounded-lg",
                 className
             )}
             id={id}

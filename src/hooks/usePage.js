@@ -3,7 +3,7 @@ import { loader } from "../components/UI/Loader"
 import PageService from "../services/pageService"
 import customToast from "../utils/toast"
 import { MESSAGE, MAXIMUM_PAGES_NUMBER } from "../utils/constants"
-import _ from "lodash"
+import get from "lodash/get"
 
 export const usePage = (listPages) => {
     const [pages, setPages] = useState([...listPages])
@@ -14,7 +14,10 @@ export const usePage = (listPages) => {
             return
         }
         loader.emit("start")
-        const response = await PageService.createNewPage(docId, pageName)
+        const response = await PageService.createNewPage({
+            documentId: docId,
+            pageName: pageName,
+        })
         loader.emit("stop")
 
         if (response.error) {
@@ -25,7 +28,7 @@ export const usePage = (listPages) => {
             return
         }
         setPages([...pages, response.results])
-        return _.get(response, "results.id", pages[pages.length - 1].id)
+        return get(response, "results.id", pages[pages.length - 1].id)
     }
 
     const renamePage = async ({ docId, selectedPageId, newName }) => {
@@ -54,9 +57,12 @@ export const usePage = (listPages) => {
         )
     }
 
-    const deletePage = async ({ pageId }) => {
+    const deletePage = async ({ docId, pageId }) => {
         loader.emit("start")
-        const response = await PageService.deletePage(pageId)
+        const response = await PageService.deletePage({
+            documentId: docId,
+            pageId: pageId,
+        })
         loader.emit("stop")
         if (response.error) {
             const {
@@ -67,7 +73,7 @@ export const usePage = (listPages) => {
         }
         const newListPage = pages.filter((page) => page.id !== pageId)
         setPages(newListPage)
-        customToast.success(_.get(response, "results.message"))
+        customToast.success(get(response, "results.message"))
         return newListPage
     }
 

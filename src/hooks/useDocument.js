@@ -2,36 +2,44 @@ import { useState } from "react"
 import { loader } from "../components/UI/Loader"
 import DocumentService from "../services/documentService"
 import customToast from "../utils/toast"
-import { DEFAULT_TITLE } from "../utils/constants"
-import { useEffect } from "react"
-import _ from "lodash"
+import { DEFAULT_TITLE, PAGES } from "../utils/constants"
+import get from "lodash/get"
+
+const PATH = {
+    personal: "/personal",
+    favorite: "/favourite",
+    shared: "/share",
+}
 
 export const useDocument = () => {
-    const [documents, setDocuments] = useState([])
+    const [documents, setDocuments] = useState(undefined)
 
-    useEffect(() => {
-        const fetchDocuments = async () => {
-            loader.emit("start")
-            const response = await DocumentService.getPersonalDocuments()
-            loader.emit("stop")
-            if (response.error) {
-                const {
-                    error: { message },
-                } = response
-                customToast.error(message)
-                return
-            }
-            const { results: listDoc } = response
-            setDocuments(listDoc)
-        }
-        fetchDocuments()
-    }, [])
+    const fetchDocuments = async (id) => {
+        let path = get(PATH, `${id}`, `?workspace_id=${id}`)
 
-    const createDocument = async () => {
         loader.emit("start")
-        const response = await DocumentService.createNewDocument({
+        const response = await DocumentService.getDocuments(path)
+        loader.emit("stop")
+        if (response.error) {
+            const {
+                error: { message },
+            } = response
+            customToast.error(message)
+            return
+        }
+        const listDoc = get(response, "results", [])
+        setDocuments(listDoc)
+    }
+
+    const createDocument = async (id) => {
+        let data = {
             name: DEFAULT_TITLE,
-        })
+        }
+        if (!get(PAGES, `${id}`)) {
+            data.workspace_id = id
+        }
+        loader.emit("start")
+        const response = await DocumentService.createNewDocument(data)
         loader.emit("stop")
         if (response.error) {
             const {
@@ -43,30 +51,7 @@ export const useDocument = () => {
         return response
     }
 
-    const deleteDocument = async ({ docId }) => {
-        loader.emit("start")
-        const response = await DocumentService.deleteDocument(docId)
-        loader.emit("stop")
-
-        if (response.error) {
-            const {
-                error: { message },
-            } = response
-            customToast.error(message)
-            return
-        }
-        const newListDocuments = documents.filter(
-            (document) => document.id !== docId
-        )
-        setDocuments(newListDocuments)
-        customToast.success(_.get(response, "results.message"))
-    }
-
     const renameDocument = async ({ docId, newName }) => {
-        const document = documents.find((document) => document.id === docId)
-        if (!newName || !document || newName === document.name) {
-            return
-        }
         loader.emit("start")
         const response = await DocumentService.updateDocument(docId, {
             name: newName,
@@ -88,5 +73,30 @@ export const useDocument = () => {
         )
     }
 
-    return { documents, createDocument, deleteDocument, renameDocument }
+    const deleteDocument = async ({ docId }) => {
+        loader.emit("start")
+        const response = await DocumentService.deleteDocument(docId)
+        loader.emit("stop")
+
+        if (response.error) {
+            const {
+                error: { message },
+            } = response
+            customToast.error(message)
+            return
+        }
+        const newListDocuments = documents.filter(
+            (document) => document.id !== docId
+        )
+        setDocuments(newListDocuments)
+        customToast.success(get(response, "results.message"))
+    }
+
+    return {
+        documents,
+        fetchDocuments,
+        createDocument,
+        renameDocument,
+        deleteDocument,
+    }
 }

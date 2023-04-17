@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { generatePath, useNavigate, useParams } from "react-router-dom"
 import { Board } from "../../components/UI/Board"
 import { DefaultHeader } from "../../components/UI/Header/DefaultHeader"
 import { IconButton } from "../../components/UI/IconButton"
 import { SideBar } from "../../components/UI/SideBar"
 import { useDrawer } from "../../hooks/useDrawer"
 import DocumentService from "../../services/documentService"
-import { DEFAULT_TITLE, PAGE_TITLES } from "../../utils/constants"
+import { DEFAULT_TITLE, PAGE_TITLES, PATH } from "../../utils/constants"
 import "react-toastify/dist/ReactToastify.css"
 import { ReactComponent as LockIcon } from "../../assets/lock.svg"
 import {
@@ -24,6 +24,7 @@ import customToast from "../../utils/toast"
 import { loader } from "../../components/UI/Loader"
 import "./index.css"
 import { PageNavigation } from "../../components/UI/PageNavigation"
+import { useWorkspace } from "../../hooks/useWorkspace"
 
 const DRAWER_ID = "drawer-navigation"
 
@@ -35,6 +36,11 @@ export function Document() {
     const [tempDoc, setTempDoc] = useState({})
     const [showNameInput, setShowNameInput] = useState(false)
     const [favorites, setFavorites] = useState(false)
+    const [currentWorkspace, setCurrentWorkspace] = useState({
+        name: "",
+        url: "",
+    })
+    const { workspaces, fetchWorkspaces } = useWorkspace()
 
     const [activePageId, setActivePageId] = useState(undefined)
 
@@ -48,20 +54,45 @@ export function Document() {
             loader.emit("stop")
 
             if (response.error) {
-                navigate("/not-found")
+                navigate(PATH.NOT_FOUND)
                 return
             }
             const {
-                results: { 0: document, is_favourite },
+                results: { 0: document, is_favourite, is_owner },
             } = response
             setFavorites(is_favourite)
+            const newWorkspaces = await fetchWorkspaces()
             setDoc(document)
             setTempDoc(document)
-            setActivePageId(document.pages[0].id)
+            setActivePageId(document.pages[0]?.id)
+            setCurrentWorkspaceData({
+                workspaces: newWorkspaces,
+                document: document,
+                is_owner: is_owner,
+            })
         }
         fetchDocuments()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [docId])
+
+    const setCurrentWorkspaceData = ({ workspaces, document, is_owner }) => {
+        if (is_owner) {
+            let name = "Personal"
+            let url = PATH.WORKSPACE.PERSONAL
+            if (document?.workspace_id) {
+                name = workspaces.find(
+                    (workspace) => workspace.id === document.workspace_id
+                )?.name
+                url = generatePath(PATH.WORKSPACE.DEFAULT, {
+                    workspaceId: document?.workspace_id,
+                })
+            }
+
+            setCurrentWorkspace({ name: name, url: url })
+            return
+        }
+        setCurrentWorkspace({ name: "Shared", url: PATH.WORKSPACE.SHARED })
+    }
 
     const handleDocumentNameInputKeyDown = async (event) => {
         if (event.key === "Enter") {
@@ -110,17 +141,25 @@ export function Document() {
                             <IconButton
                                 className="rounded-xl py-1 pl-1 px-2 text-black bg-white hover:bg-gray-100"
                                 onClick={() => {
-                                    navigate("/")
+                                    navigate(currentWorkspace.url)
                                 }}
                             >
                                 <div className="bg-red-100 w-6 h-6 flex items-center justify-center rounded-lg mr-2">
                                     <UserCircleIcon className="w-4 h-4" />
                                 </div>
-                                Personal
+                                <div
+                                    className="max-w-[150px] truncate"
+                                    title={`Back to ${currentWorkspace.name}`}
+                                >
+                                    {currentWorkspace.name}
+                                </div>
                             </IconButton>
                             <div className="flex items-center text-sm">
                                 <div className="mx-1.5 text-gray-400">/</div>
-                                <div className="px-1.5 py-1 text-gray-400">
+                                <div
+                                    className="px-1.5 py-1 text-gray-400 max-w-[200px] truncate"
+                                    title={doc.name}
+                                >
                                     {doc.name}
                                 </div>
                             </div>
@@ -133,7 +172,8 @@ export function Document() {
                                 <div className="flex relative">
                                     {!showNameInput && (
                                         <div
-                                            className="text-2xl"
+                                            className="text-2xl max-w-[290px] truncate"
+                                            title={tempDoc.name}
                                             onClick={() => {
                                                 setShowNameInput(!showNameInput)
                                             }}
@@ -217,19 +257,24 @@ export function Document() {
                 </div>
                 <div className=" mx-12 mt-4">
                     <div className="w-full">
-                        <Board listPages={doc.pages}/>
+                        <Board
+                            listPages={doc.pages}
+                            docId={doc.id}
+                            activePageId={activePageId}
+                        />
                     </div>
                 </div>
             </div>
             <div
                 id={DRAWER_ID}
-                className="fixed top-0 left-0 z-40 h-screen overflow-y-auto transition-transform -translate-x-full bg-white w-72"
+                className="fixed top-0 left-0 z-40 h-screen overflow-y-auto transition-transform -translate-x-full bg-white w-2/12"
                 tabIndex="-1"
                 aria-labelledby="drawer-navigation-label"
             >
                 <SideBar
                     className="bg-white"
                     hideBackGround={() => drawer.hide()}
+                    workspaces={workspaces}
                 />
             </div>
         </div>

@@ -55,7 +55,7 @@ export const PageNavigation = ({
     }
 
     const handleDeletePage = async (pageId) => {
-        const newListPage = await deletePage({ pageId: pageId })
+        const newListPage = await deletePage({ docId, pageId })
         if (activePageId === pageId) setActivePageId(newListPage[0]?.id)
     }
 
@@ -96,11 +96,11 @@ export const PageNavigation = ({
                     ))}
             </ScrollContainer>
 
-            <PopoverMenu id={POPOVER_PAGE_ID} className="w-44 p-2">
+            <PopoverMenu id={POPOVER_PAGE_ID} className="w-48">
                 {!showRenameInput && (
                     <>
                         <IconButton
-                            className="w-full px-3 py-1.5 bg-white hover:bg-gray-100 text-sm text-gray-400 hover:text-black rounded-lg"
+                            className="transition w-full px-3 py-1.5 bg-white hover:bg-gray-100 text-sm text-gray-400 hover:text-black rounded-lg"
                             onClick={() => {
                                 setShowRenameInput(true)
                                 setTempPageName(
@@ -115,13 +115,13 @@ export const PageNavigation = ({
                         </IconButton>
                         {pages.length > 1 && (
                             <IconButton
-                                className="w-full px-3 py-1.5 mt-1.5 mb-1 bg-red-200 text-sm text-gray-400 hover:text-red-600 rounded-lg"
+                                className="transition w-full px-3 py-1.5 bg-red-200 text-sm text-gray-400 hover:text-red-600 rounded-lg"
                                 onClick={() => {
                                     popover.hide()
                                     triggerModal({ targetId: DELETE_MODAL_ID })
                                 }}
                             >
-                                <TrashIcon className="w-3.5 h-3.5 mr-2.5" />
+                                <TrashIcon className="w-3.5 h-3.5 mr-2" />
                                 Delete
                             </IconButton>
                         )}

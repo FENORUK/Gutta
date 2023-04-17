@@ -25,7 +25,7 @@ import {
     handleUpdateBlock,
 } from "../../../helper/helper"
 
-export function Board({ listPages }) {
+export function Board({ listPages, docId, activePageId }) {
     const containerRef = useRef()
     const [containerWidth, setContainerWidth] = useState(DOCUMENT_WIDTH)
     const [cols, setCols] = useState(COLUMNS_NUMBER)
@@ -42,7 +42,9 @@ export function Board({ listPages }) {
 
         const fetchPages = async () => {
             loader.emit("start")
-            const response = await PageService.getPageByDocumentId()
+            const response = await PageService.getPageByDocumentId({
+                documentId: docId,
+            })
             loader.emit("stop")
             if (response.error) {
                 const {
@@ -58,7 +60,10 @@ export function Board({ listPages }) {
 
         const fetchBlocks = async () => {
             loader.emit("start")
-            const response = await BlockService.getBlockByPageId()
+            const response = await BlockService.getBlockByPageId({
+                documentId: docId,
+                pageId: activePageId,
+            })
             loader.emit("stop")
             if (response.error) {
                 const {
@@ -86,7 +91,7 @@ export function Board({ listPages }) {
             setBlocks(newBlocks)
         }
         fetchBlocks()
-    }, [])
+    }, [activePageId])
 
     const handleCreateBlock = async (updatedBlock) => {
         loader.emit("start")
@@ -94,7 +99,7 @@ export function Board({ listPages }) {
             is_title_hidden: 0,
             position: String(`${updatedBlock.x}x${updatedBlock.y}`),
             size: String(`${updatedBlock.w}x${updatedBlock.h}`),
-            page_id: "8a5f03ff-1875-4bf3-a3f4-aef1264e3bcc",
+            page_id: activePageId,
         })
         loader.emit("stop")
         if (response.error) {
