@@ -4,7 +4,11 @@ import { useState } from "react"
 import { useEffect } from "react"
 import { PAGES, PATH } from "../../utils/constants"
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid"
-import { StarIcon, XCircleIcon } from "@heroicons/react/24/outline"
+import {
+    StarIcon as OutlineStarIcon,
+    XCircleIcon,
+} from "@heroicons/react/24/outline"
+import { StarIcon as SolidStarIcon } from "@heroicons/react/24/solid"
 import { IconButton } from "../../components/UI/IconButton"
 import { useDocument } from "../../hooks/useDocument"
 import { usePopover } from "../../hooks/usePopover"
@@ -46,6 +50,7 @@ export const Workspace = () => {
         createDocument,
         deleteDocument,
         renameDocument,
+        updateFavoriteDocument,
     } = useDocument()
     const navigate = useNavigate()
 
@@ -124,6 +129,15 @@ export const Workspace = () => {
         document.title = newWorkspace.name
     }
 
+    const handleUpdateFavoriteDocument = async (isFavorite) => {
+        const newSelectedDocument = await updateFavoriteDocument({
+            isFavouriteWorkspace: isFavouriteWorkspace,
+            docId: selectedDocument?.id,
+            isFavorite: isFavorite,
+        })
+        setSelectedDocument(newSelectedDocument)
+    }
+
     const isDefaultWorkspace = get(PAGES, `${currentWorkspace?.id}`)
 
     const isFullPermissionWorkspace =
@@ -133,6 +147,8 @@ export const Workspace = () => {
 
     const isSharedWorkspace =
         isDefaultWorkspace && currentWorkspace?.name === PAGES.shared.name
+    const isFavouriteWorkspace =
+        isDefaultWorkspace && currentWorkspace?.name === PAGES.favorite.name
 
     if (!currentWorkspace || !documents) return <></>
 
@@ -186,10 +202,23 @@ export const Workspace = () => {
                     className="w-full px-3 py-1.5 bg-white hover:bg-gray-100 text-sm text-gray-400 hover:text-black rounded-lg pr-8"
                     onClick={() => {
                         popover.hide()
+                        handleUpdateFavoriteDocument(
+                            !isFavouriteWorkspace &&
+                                !selectedDocument?.favourite
+                        )
                     }}
                 >
-                    <StarIcon className="w-3.5 h-3.5 mr-2.5" />
-                    Add to Favorites
+                    {selectedDocument?.favourite || isFavouriteWorkspace ? (
+                        <>
+                            <SolidStarIcon className="w-4 h-4 mr-2 text-rose-500" />
+                            Remove from favorites
+                        </>
+                    ) : (
+                        <>
+                            <OutlineStarIcon className="w-3.5 h-3.5 mr-2.5 text-slate-600" />
+                            Add to favorites
+                        </>
+                    )}
                 </IconButton>
                 {isFullPermissionWorkspace && (
                     <IconButton

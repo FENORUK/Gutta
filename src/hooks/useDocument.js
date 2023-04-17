@@ -4,6 +4,7 @@ import DocumentService from "../services/documentService"
 import customToast from "../utils/toast"
 import { DEFAULT_TITLE, PAGES } from "../utils/constants"
 import get from "lodash/get"
+import { MESSAGE } from "../utils/constants"
 
 const PATH = {
     personal: "/personal",
@@ -21,10 +22,9 @@ export const useDocument = () => {
         const response = await DocumentService.getDocuments(path)
         loader.emit("stop")
         if (response.error) {
-            const {
-                error: { message },
-            } = response
-            customToast.error(message)
+            customToast.error(
+                get(response, "error.message", MESSAGE.DEFAULT_ERROR)
+            )
             return
         }
         const listDoc = get(response, "results", [])
@@ -42,10 +42,9 @@ export const useDocument = () => {
         const response = await DocumentService.createNewDocument(data)
         loader.emit("stop")
         if (response.error) {
-            const {
-                error: { message },
-            } = response
-            customToast.error(message)
+            customToast.error(
+                get(response, "error.message", MESSAGE.DEFAULT_ERROR)
+            )
             return
         }
         return response
@@ -59,10 +58,9 @@ export const useDocument = () => {
         loader.emit("stop")
 
         if (response.error) {
-            const {
-                error: { message },
-            } = response
-            customToast.error(message)
+            customToast.error(
+                get(response, "error.message", MESSAGE.DEFAULT_ERROR)
+            )
             return
         }
         customToast.success("Changed name successfully!")
@@ -73,16 +71,47 @@ export const useDocument = () => {
         )
     }
 
+    const updateFavoriteDocument = async ({
+        isFavouriteWorkspace,
+        docId,
+        isFavorite,
+    }) => {
+        const selectedDocument = documents.find(
+            (document) => document.id === docId
+        )
+        if (!selectedDocument) return
+        const response = await DocumentService.updateFavoriteDocument({
+            documentId: docId,
+            isFavorite: isFavorite,
+        })
+        if (response.error) {
+            customToast.error(
+                get(response, "error.message", MESSAGE.DEFAULT_ERROR)
+            )
+            return
+        }
+        const newSelectedDocument = {
+            ...selectedDocument,
+            ...{ favourite: isFavorite },
+        }
+        const newDocument = isFavouriteWorkspace
+            ? documents.filter((document) => document.id !== docId)
+            : documents.map((document) =>
+                  document.id === docId ? newSelectedDocument : document
+              )
+        setDocuments(newDocument)
+        return newSelectedDocument
+    }
+
     const deleteDocument = async ({ docId }) => {
         loader.emit("start")
         const response = await DocumentService.deleteDocument(docId)
         loader.emit("stop")
 
         if (response.error) {
-            const {
-                error: { message },
-            } = response
-            customToast.error(message)
+            customToast.error(
+                get(response, "error.message", MESSAGE.DEFAULT_ERROR)
+            )
             return
         }
         const newListDocuments = documents.filter(
@@ -97,6 +126,7 @@ export const useDocument = () => {
         fetchDocuments,
         createDocument,
         renameDocument,
+        updateFavoriteDocument,
         deleteDocument,
     }
 }
