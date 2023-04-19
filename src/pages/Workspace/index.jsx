@@ -77,7 +77,6 @@ export const Workspace = () => {
         fetchData()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [workspaceId])
-
     const handleCreate = async () => {
         const response = await createDocument(currentWorkspace.id)
         if (!response) return

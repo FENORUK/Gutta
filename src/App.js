@@ -12,6 +12,7 @@ import { CustomToastContainer } from "./components/UI/CustomToastContainer"
 import { LoadingBar } from "./components/UI/Loader"
 import { Workspace } from "./pages/Workspace"
 import { PATH } from "./utils/constants"
+import { InvitePage } from "./pages/InvitePage"
 
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL
 
@@ -40,6 +41,15 @@ const router = createBrowserRouter([
         element: (
             <AuthGuard>
                 <Document />
+            </AuthGuard>
+        ),
+    },
+    {
+        path: "/invite",
+        loader: authLoader,
+        element: (
+            <AuthGuard>
+                <InvitePage />
             </AuthGuard>
         ),
     },
