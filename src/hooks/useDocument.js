@@ -103,6 +103,10 @@ export const useDocument = () => {
         return newSelectedDocument
     }
 
+    const clearDocuments = () => {
+        setDocuments(undefined)
+    }
+
     const deleteDocument = async ({ docId }) => {
         loader.emit("start")
         const response = await DocumentService.deleteDocument(docId)
@@ -127,6 +131,7 @@ export const useDocument = () => {
         createDocument,
         renameDocument,
         updateFavoriteDocument,
+        clearDocuments,
         deleteDocument,
     }
 }

@@ -40,7 +40,7 @@ export const PageNavigation = ({
                     setActivePageId(newPage.listPages[0]?.id)
             }
         })
-    },[])
+    }, [])
 
     const [selectedPageId, setSelectedPageId] = useState("")
     const [tempPageName, setTempPageName] = useState("")
@@ -95,6 +95,7 @@ export const PageNavigation = ({
                 }}
                 activePageId={activePageId}
                 itemsCount={pages.length}
+                isOnlyViewPages={isOnlyViewPages}
             >
                 {pages &&
                     pages.map(({ id, name }) => (
@@ -104,8 +105,8 @@ export const PageNavigation = ({
                             name={name}
                             isActive={id === activePageId}
                             onClick={setActivePageId}
+                            isOnlyViewPages={isOnlyViewPages}
                             onMenuClick={(pageId) => {
-                                if (isOnlyViewPages) return
                                 setShowRenameInput(false)
                                 setSelectedPageId(pageId)
                                 triggerPopover({
@@ -121,7 +122,7 @@ export const PageNavigation = ({
                 {!showRenameInput && (
                     <>
                         <IconButton
-                            className="transition w-full px-3 py-1.5 bg-white hover:bg-gray-100 text-sm text-gray-400 hover:text-black rounded-lg"
+                            className="transition w-full px-3 py-1.5 bg-white hover:bg-gray-100 text-sm text-slate-500 hover:text-black rounded-lg"
                             onClick={() => {
                                 setShowRenameInput(true)
                                 setTempPageName(
@@ -136,7 +137,7 @@ export const PageNavigation = ({
                         </IconButton>
                         {pages.length > 1 && (
                             <IconButton
-                                className="transition w-full px-3 py-1.5 bg-red-200 text-sm text-gray-400 hover:text-red-600 rounded-lg"
+                                className="transition w-full px-3 py-1.5 bg-red-200 text-sm text-slate-500 hover:text-red-600 rounded-lg"
                                 onClick={() => {
                                     popover.hide()
                                     triggerModal({ targetId: DELETE_MODAL_ID })
@@ -152,7 +153,7 @@ export const PageNavigation = ({
                     <input
                         autoFocus
                         type="text"
-                        className="w-full border-none text-sm py-1 px-2 placeholder-gray-300 text-gray-400 rounded-md focus:ring-0"
+                        className="w-full border-none text-sm py-1 px-2 placeholder-slate-500 text-slate-500 rounded-md focus:ring-0"
                         onKeyDown={handleRenamePageInputKeyDown}
                         value={tempPageName}
                         onChange={(event) => {
@@ -165,7 +166,7 @@ export const PageNavigation = ({
             <PopoverMenu id={POPOVER_ADD_ID}>
                 <input
                     type="text"
-                    className="border-2 border-gray-100 focus:border-gray-100 text-sm p-1 px-4 placeholder-gray-300 text-gray-400 rounded-md focus:ring-0"
+                    className="border-2 border-gray-100 focus:border-gray-100 text-sm p-1 px-4 placeholder-slate-500 text-slate-500 rounded-md focus:ring-0"
                     placeholder="Create a new page"
                     onKeyDown={handleAddPageButtonKeyDown}
                     value={tempPageName}

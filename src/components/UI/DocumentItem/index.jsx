@@ -32,7 +32,7 @@ export const DocumentItem = (props) => {
                     >
                         {name}
                     </div>
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-slate-500">
                         {`Last update: ${moment(updated_at).fromNow()}`}
                     </div>
                 </div>

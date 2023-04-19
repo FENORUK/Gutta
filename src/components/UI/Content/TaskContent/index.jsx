@@ -179,7 +179,7 @@ export function TaskContent({
                 )}
             />
             {inputTask === "" ? (
-                <div className="absolute text-gray-400 cursor-pointer right-0 flex items-center">
+                <div className="absolute text-slate-500 cursor-pointer right-0 flex items-center">
                     <DocumentIcon
                         className="w-5 h-5 hover:text-black"
                         onClick={() => setSelectedOption("text")}

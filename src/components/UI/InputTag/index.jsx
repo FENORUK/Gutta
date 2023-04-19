@@ -11,11 +11,10 @@ export default function InputTag(props) {
                 onChange={onChange}
                 type={type}
                 className={clsx(
-                    "bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-red-200 focus:border-red-100 block w-full py-2.5 pl-4 pr-10",
-                    {
-                        "border-red-600 focus:border-red-600 focus:ring-red-500":
-                            errorMessage,
-                    }
+                    "bg-gray-50 border text-gray-900 text-base rounded-lg block w-full py-2.5 pl-4 pr-10",
+                    errorMessage
+                        ? "border-red-600 focus:border-red-600 focus:ring-red-700"
+                        : "border-gray-400 focus:border-rose-300 focus:ring-rose-400"
                 )}
                 placeholder={placeholder}
                 required

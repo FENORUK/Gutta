@@ -11,7 +11,7 @@ export default function Button({
         <button
             type={type}
             className={clsx(
-                "text-white bg-red-300 hover:bg-red-100 font-medium rounded-lg text-base px-5 py-2.5 w-full mr-2 mb-2 focus:outline-none",
+                "text-white bg-rose-500 hover:bg-rose-600 font-bold rounded-lg text-base px-5 py-2.5 w-full focus:outline-none",
                 className
             )}
             onClick={onClick}

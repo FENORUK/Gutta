@@ -10,9 +10,9 @@ export function MiniWorkSpace({ workspace }) {
             >
                 <DocumentIcon
                     aria-hidden="true"
-                    className="w-4 h-4 text-gray-500 transition duration-75 group-hover:text-gray-900"
+                    className="w-4 h-4 text-slate-500 transition duration-75 group-hover:text-black"
                 ></DocumentIcon>
-                <span className="ml-3 text-gray-500 text-sm">
+                <span className="ml-3 text-slate-500 text-sm">
                     {workspace.name}
                 </span>
             </a>

@@ -17,15 +17,11 @@ import RealtimeService from "../../services/realtimeService"
 import "react-toastify/dist/ReactToastify.css"
 import { ReactComponent as LockIcon } from "../../assets/lock.svg"
 import {
-    ArrowUpTrayIcon,
     Bars3Icon,
     UserCircleIcon,
     UserGroupIcon,
 } from "@heroicons/react/24/solid"
-import {
-    ChatBubbleOvalLeftEllipsisIcon,
-    StarIcon as OutlineStarIcon,
-} from "@heroicons/react/24/outline"
+import { StarIcon as OutlineStarIcon } from "@heroicons/react/24/outline"
 import { StarIcon as SolidStarIcon } from "@heroicons/react/24/solid"
 
 import customToast from "../../utils/toast"
@@ -279,7 +275,7 @@ export function Document() {
                         <div className="flex">
                             <IconButton
                                 onClick={() => drawer.show()}
-                                className="px-2 mr-3 justify-center"
+                                className="px-2 mr-3 justify-center hover:bg-gray-100 text-slate-500 hover:text-black"
                             >
                                 <Bars3Icon className="w-4 h-4" />
                             </IconButton>
@@ -289,7 +285,7 @@ export function Document() {
                                     navigate(currentWorkspace.url)
                                 }}
                             >
-                                <div className="bg-red-100 w-6 h-6 flex items-center justify-center rounded-lg mr-2">
+                                <div className="text-white bg-rose-400 w-6 h-6 flex items-center justify-center rounded-lg mr-2">
                                     <UserCircleIcon className="w-4 h-4" />
                                 </div>
                                 <div
@@ -300,9 +296,9 @@ export function Document() {
                                 </div>
                             </IconButton>
                             <div className="flex items-center text-sm">
-                                <div className="mx-1.5 text-gray-400">/</div>
+                                <div className="mx-1.5 text-slate-500">/</div>
                                 <div
-                                    className="px-1.5 py-1 text-gray-400 max-w-[200px] truncate"
+                                    className="px-1.5 py-1 text-slate-500 max-w-[200px] truncate"
                                     title={doc.name}
                                 >
                                     {doc.name}
@@ -327,17 +323,10 @@ export function Document() {
                                             {tempDoc.name}
                                         </div>
                                     )}
-                                    <div className="relative flex pl-4 justify-center items-center">
-                                        <div className="w-7 h-7 text-gray-400 text-2xl text-center">
+                                    <div className="relative flex pl-3.5 justify-center items-center">
+                                        <div className="w-7 h-7 text-slate-500 text-xl text-center">
                                             |
                                         </div>
-
-                                        <IconButton
-                                            className="bg-white hover:bg-gray-100 w-7 h-7 rounded-lg m-0.5 justify-center"
-                                            title="Comments"
-                                        >
-                                            <ChatBubbleOvalLeftEllipsisIcon className="w-4 h-4" />
-                                        </IconButton>
 
                                         <IconButton
                                             className="bg-white hover:bg-gray-100 w-7 h-7 rounded-lg m-0.5 justify-center"
@@ -354,9 +343,9 @@ export function Document() {
                                             }}
                                         >
                                             {favorites ? (
-                                                <SolidStarIcon className="w-4 h-4" />
+                                                <SolidStarIcon className="w-5 h-5 text-rose-500" />
                                             ) : (
-                                                <OutlineStarIcon className="w-4 h-4" />
+                                                <OutlineStarIcon className="w-4 h-4 text-slate-500" />
                                             )}
                                         </IconButton>
                                     </div>
@@ -388,7 +377,7 @@ export function Document() {
                                         <>
                                             <IconButton
                                                 id={BUTTON_SHARE_ID}
-                                                className="text-sm px-3 text-black bg-red-100 hover:bg-red-300 justify-center"
+                                                className="text-sm px-3 text-white bg-blue-600 hover:bg-blue-700 justify-center"
                                                 title="Private to only me"
                                                 onClick={() => {
                                                     triggerPopover({
@@ -409,13 +398,6 @@ export function Document() {
                                                         Share
                                                     </>
                                                 )}
-                                            </IconButton>
-
-                                            <IconButton
-                                                className="ml-2 px-2 h-8 text-gray-400 hover:text-black"
-                                                title="Export menu"
-                                            >
-                                                <ArrowUpTrayIcon className="w-4 h-4" />
                                             </IconButton>
                                         </>
                                     )}

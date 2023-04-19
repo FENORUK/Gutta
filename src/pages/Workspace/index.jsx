@@ -3,7 +3,7 @@ import { generatePath, useNavigate, useParams } from "react-router-dom"
 import { useState } from "react"
 import { useEffect } from "react"
 import { PAGES, PATH } from "../../utils/constants"
-import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid"
+import { PencilIcon, PlusSmallIcon, TrashIcon } from "@heroicons/react/24/solid"
 import { StarIcon as OutlineStarIcon } from "@heroicons/react/24/outline"
 import { StarIcon as SolidStarIcon } from "@heroicons/react/24/solid"
 import { IconButton } from "../../components/UI/IconButton"
@@ -45,9 +45,10 @@ export const Workspace = () => {
         documents,
         fetchDocuments,
         createDocument,
-        deleteDocument,
-        renameDocument,
         updateFavoriteDocument,
+        renameDocument,
+        clearDocuments,
+        deleteDocument,
     } = useDocument()
     const navigate = useNavigate()
 
@@ -58,6 +59,7 @@ export const Workspace = () => {
     useEffect(() => {
         const fetchData = async () => {
             clearPopover()
+            clearDocuments()
             const newWorkspaces = await fetchWorkspaces()
             let workspace = PAGES[workspaceId]?.name
                 ? { id: workspaceId, name: PAGES[workspaceId]?.name }
@@ -145,7 +147,7 @@ export const Workspace = () => {
     const isFavouriteWorkspace =
         isDefaultWorkspace && currentWorkspace?.name === PAGES.favorite.name
 
-    if (!currentWorkspace || !documents) return <></>
+    if (!currentWorkspace) return <></>
 
     return (
         <>
@@ -158,22 +160,25 @@ export const Workspace = () => {
                     {currentWorkspace.name}
                     {isFullPermissionWorkspace && (
                         <IconButton
-                            className="bg-red-100 hover:bg-red-300 px-3"
+                            className="text-white bg-blue-600 hover:bg-blue-700 px-3"
                             onClick={handleCreate}
                         >
-                            <PlusIcon className="w-4 h-4 mr-2" />
+                            <PlusSmallIcon className="w-5 h-5 mr-1.5" />
                             New Document
                         </IconButton>
                     )}
                 </div>
                 <div className="w-full h-full py-6">
                     <DocumentContext.Provider value={{ onDocumentMenuClicked }}>
-                        <DefaultBody
-                            documents={documents}
-                            isFullPermissionWorkspace={
-                                isFullPermissionWorkspace
-                            }
-                        />
+                        {documents && (
+                            <DefaultBody
+                                documents={documents}
+                                isFullPermissionWorkspace={
+                                    isFullPermissionWorkspace
+                                }
+                                isFavouriteWorkspace={isFavouriteWorkspace}
+                            />
+                        )}
                     </DocumentContext.Provider>
                 </div>
             </DefaultLayout>
@@ -181,7 +186,7 @@ export const Workspace = () => {
             <PopoverMenu id={DOCUMENT_MENU_ID}>
                 {isFullPermissionWorkspace && (
                     <IconButton
-                        className="w-full px-3 py-1.5 bg-white hover:bg-gray-100 text-sm text-gray-400 hover:text-black rounded-lg"
+                        className="w-full px-3 py-1.5 bg-white hover:bg-gray-100 text-sm text-slate-500 hover:text-black rounded-lg"
                         onClick={() => {
                             popover.hide()
                             triggerModal({
@@ -194,7 +199,7 @@ export const Workspace = () => {
                     </IconButton>
                 )}
                 <IconButton
-                    className="w-full px-3 py-1.5 bg-white hover:bg-gray-100 text-sm text-gray-400 hover:text-black rounded-lg pr-8"
+                    className="w-full px-3 py-1.5 bg-white hover:bg-gray-100 text-sm text-slate-500 hover:text-black rounded-lg pr-8"
                     onClick={() => {
                         popover.hide()
                         handleUpdateFavoriteDocument(
@@ -217,7 +222,7 @@ export const Workspace = () => {
                 </IconButton>
                 {isFullPermissionWorkspace && (
                     <IconButton
-                        className="transition w-full px-3 py-1.5 bg-red-200 text-sm text-gray-400 hover:text-red-600 rounded-lg"
+                        className="transition w-full px-3 py-1.5 bg-red-200 text-sm text-slate-500 hover:text-red-600 rounded-lg"
                         onClick={() => {
                             popover.hide()
                             triggerModal({
@@ -233,7 +238,7 @@ export const Workspace = () => {
 
             <PopoverMenu id={WORKSPACE_MENU_ID} className="w-48">
                 <IconButton
-                    className="transition w-full px-3 py-1.5 bg-white hover:bg-gray-100 text-sm text-gray-400 hover:text-black rounded-lg pr-8"
+                    className="transition w-full px-3 py-1.5 bg-white hover:bg-gray-100 text-sm text-slate-500 hover:text-black rounded-lg pr-8"
                     onClick={() => {
                         popover.hide()
                         triggerModal({ targetId: RENAME_WORKSPACE_MODAL_ID })
@@ -243,7 +248,7 @@ export const Workspace = () => {
                     Rename
                 </IconButton>
                 <IconButton
-                    className="transition w-full px-3 py-1.5 bg-red-200 text-sm text-gray-400 hover:text-red-600 rounded-lg"
+                    className="transition w-full px-3 py-1.5 bg-rose-100 text-sm text-slate-500 hover:text-red-600 rounded-lg"
                     onClick={() => {
                         popover.hide()
                         triggerModal({ targetId: DELETE_WORKSPACE_MODAL_ID })
