@@ -8,10 +8,14 @@ export const usePopover = () => {
         offset: 3,
     }
 
-    const { menu: popover, trigger: triggerPopover } = useMenuHOC({
+    const {
+        menu: popover,
+        trigger: triggerPopover,
+        clearMenu: clearPopover,
+    } = useMenuHOC({
         Menu: Popover,
         defaultOptions,
     })
 
-    return { popover, triggerPopover }
+    return { popover, triggerPopover, clearPopover }
 }

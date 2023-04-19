@@ -9,7 +9,7 @@ import { PATH } from "../../../utils/constants"
 export const DocumentItem = (props) => {
     const navigate = useNavigate()
     const {
-        document: { id, name, created_at },
+        document: { id, name, updated_at },
     } = props
 
     const { onDocumentMenuClicked } = useContext(DocumentContext)
@@ -33,7 +33,7 @@ export const DocumentItem = (props) => {
                         {name}
                     </div>
                     <div className="text-xs text-gray-400">
-                        {moment(created_at).fromNow()}
+                        {`Last update: ${moment(updated_at).fromNow()}`}
                     </div>
                 </div>
                 <div>

@@ -83,11 +83,68 @@ const documentService = () => {
                 return { error }
             }
         },
+        shareDocument: async ({
+            documentId = "",
+            data = { role: "", email: "" },
+        }) => {
+            try {
+                const apiResponse = await axios.post(
+                    `document/${documentId}/share`,
+                    data,
+                    {
+                        headers: getHeaders(),
+                    }
+                )
+                return apiResponse
+            } catch (error) {
+                return { error }
+            }
+        },
         acceptShareDocument: async ({ token }) => {
             try {
                 const apiResponse = await axios.post(
                     "document/accept",
                     { token: token },
+                    {
+                        headers: getHeaders(),
+                    }
+                )
+                return apiResponse
+            } catch (error) {
+                return { error }
+            }
+        },
+        getUsersRoleDocument: async ({ documentId }) => {
+            try {
+                const apiResponse = await axios.get(
+                    `document/${documentId}/role`,
+                    {
+                        headers: getHeaders(),
+                    }
+                )
+                return apiResponse
+            } catch (error) {
+                return { error }
+            }
+        },
+        updateUsersRoleDocument: async ({ userRoleId, userRole }) => {
+            try {
+                const apiResponse = await axios.put(
+                    `document/${userRoleId}/role`,
+                    { role: userRole },
+                    {
+                        headers: getHeaders(),
+                    }
+                )
+                return apiResponse
+            } catch (error) {
+                return { error }
+            }
+        },
+        removeUsersRoleDocument: async ({ documentId, userRoleId }) => {
+            try {
+                const apiResponse = await axios.delete(
+                    `document/${documentId}/share/${userRoleId}`,
                     {
                         headers: getHeaders(),
                     }

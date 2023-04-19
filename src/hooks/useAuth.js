@@ -22,7 +22,9 @@ export const useAuth = () => {
             logout()
             return
         }
-        setUser(result.results)
+        const { results } = result
+        setUser(results)
+        return results
     }
 
     return {
