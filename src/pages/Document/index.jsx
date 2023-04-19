@@ -124,6 +124,22 @@ export function Document() {
         }
     }
 
+    const handleUpdateFavoriteDocument = async (documentId, isFavorite) => {
+        const response = await DocumentService.updateFavoriteDocument({
+            documentId: documentId,
+            isFavorite: isFavorite,
+        })
+        if (response.error) {
+            const {
+                error: { message },
+            } = response
+            customToast.error(message)
+            setTempDoc(doc)
+            return
+        }
+        setFavorites(isFavorite)
+    }
+
     if (!doc) return <></>
 
     return (
@@ -195,7 +211,17 @@ export function Document() {
 
                                         <IconButton
                                             className="bg-white hover:bg-gray-100 w-7 h-7 rounded-lg m-0.5 justify-center"
-                                            title="Add to Favorites"
+                                            title={
+                                                favorites
+                                                    ? "Remove from favorites"
+                                                    : "Add to favorites"
+                                            }
+                                            onClick={() => {
+                                                handleUpdateFavoriteDocument(
+                                                    docId,
+                                                    !favorites
+                                                )
+                                            }}
                                         >
                                             {favorites ? (
                                                 <SolidStarIcon className="w-4 h-4" />

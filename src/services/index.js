@@ -18,7 +18,7 @@ axios.interceptors.response.use(
     function (error) {
         if (error.response) {
             const { status } = error.response
-            if (status === HttpStatusCode.Forbidden) {
+            if (status === HttpStatusCode.Unauthorized) {
                 window.location.replace("/")
             }
             return Promise.reject({

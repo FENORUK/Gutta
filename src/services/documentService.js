@@ -69,6 +69,20 @@ const documentService = () => {
                 return { error }
             }
         },
+        updateFavoriteDocument: async ({ documentId, isFavorite }) => {
+            try {
+                const apiResponse = await axios.post(
+                    `document/${documentId}/favourite`,
+                    { is_favourite: isFavorite },
+                    {
+                        headers: getHeaders(),
+                    }
+                )
+                return apiResponse
+            } catch (error) {
+                return { error }
+            }
+        },
         deleteDocument: async (documentId) => {
             try {
                 const apiResponse = await axios.delete(
