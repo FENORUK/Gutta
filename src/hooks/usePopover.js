@@ -1,5 +1,5 @@
 import { Popover } from "flowbite"
-import { useState } from "react"
+import { useMenuHOC } from "./useMenuHOC"
 
 export const usePopover = () => {
     const defaultOptions = {
@@ -8,50 +8,10 @@ export const usePopover = () => {
         offset: 3,
     }
 
-    const [popover, setPopover] = useState(undefined)
-    const [popoverOptions, setPopoverOptions] = useState({
-        targetId: "",
-        triggerId: "",
+    const { menu: popover, trigger: triggerPopover } = useMenuHOC({
+        Menu: Popover,
+        defaultOptions,
     })
-
-    const createPopover = ({ targetId, triggerId, options }) => {
-        if (!targetId || !triggerId) return
-        const $targetEl = document.getElementById(targetId)
-        const $triggerEl = document.getElementById(triggerId)
-
-        if (!$targetEl || !$triggerEl) return {}
-
-        const newPopover = new Popover($targetEl, $triggerEl, {
-            ...defaultOptions,
-            ...options,
-        })
-        return newPopover
-    }
-
-    const triggerPopover = ({ targetId, triggerId, options = {} }) => {
-        if (
-            triggerId === popoverOptions.triggerId &&
-            targetId === popoverOptions.targetId
-        ) {
-            if (popover.isVisible()) {
-                popover.hide()
-                return
-            }
-            popover.show()
-            return
-        }
-        setPopoverOptions({
-            targetId: targetId,
-            triggerId: triggerId,
-        })
-        const newPopover = createPopover({
-            targetId: targetId,
-            triggerId: triggerId,
-            options: options,
-        })
-        newPopover.show()
-        setPopover(newPopover)
-    }
 
     return { popover, triggerPopover }
 }
