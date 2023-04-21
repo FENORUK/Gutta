@@ -83,6 +83,20 @@ const documentService = () => {
                 return { error }
             }
         },
+        acceptShareDocument: async ({ token }) => {
+            try {
+                const apiResponse = await axios.post(
+                    "document/accept",
+                    { token: token },
+                    {
+                        headers: getHeaders(),
+                    }
+                )
+                return apiResponse
+            } catch (error) {
+                return { error }
+            }
+        },
         deleteDocument: async (documentId) => {
             try {
                 const apiResponse = await axios.delete(

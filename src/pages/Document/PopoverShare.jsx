@@ -24,93 +24,89 @@ export const PopoverShare = ({ id, onSubmit }) => {
     }
 
     return (
-        <>
-            <PopoverMenu id={id} className="py-4 px-6">
-                <div className="pb-4 mb-2.5 border-b">
-                    <div className="text-lg font-semibold mb-4">
-                        Share & Invite
-                    </div>
-                    <div className="flex">
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder="Email address"
-                                className="border-none w-72 h-8 focus:ring-0 bg-gray-100 py-1 pl-2 pr-24 text-xs rounded-md"
-                                value={emailInput}
-                                onChange={(event) => {
-                                    setEmailInput(event.target.value)
-                                }}
-                                onKeyDown={handleKeyDown}
-                            />
-                            <button
-                                id={BUTTON_INVITE_DROPDOWN}
-                                className="absolute right-2 top-2 text-sm text-gray-400 flex items-center text-xs"
-                                onClick={() => {
-                                    triggerDropdown({
-                                        targetId: DROPDOWN_INVITE_MENU,
-                                        triggerId: BUTTON_INVITE_DROPDOWN,
-                                    })
-                                }}
-                            >
-                                Can view{" "}
-                                <ChevronDownIcon className="ml-1 w-3 h-3" />
-                            </button>
-                        </div>
+        <PopoverMenu id={id} className="py-4 px-6">
+            <div className="pb-4 mb-2.5 border-b">
+                <div className="text-lg font-semibold mb-4">Share & Invite</div>
+                <div className="flex">
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Email address"
+                            className="border-none w-72 h-8 focus:ring-0 bg-gray-100 py-1 pl-2 pr-24 text-xs rounded-md"
+                            value={emailInput}
+                            onChange={(event) => {
+                                setEmailInput(event.target.value)
+                            }}
+                            onKeyDown={handleKeyDown}
+                        />
                         <button
-                            className="ml-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-100 disabled:text-gray-400 text-white text-xs px-4 rounded-md"
-                            disabled={!EMAIL_VALIDATION.test(emailInput)}
+                            id={BUTTON_INVITE_DROPDOWN}
+                            className="absolute right-2 top-2 text-sm text-gray-400 flex items-center text-xs"
                             onClick={() => {
-                                onSubmit(emailInput)
+                                triggerDropdown({
+                                    targetId: DROPDOWN_INVITE_MENU,
+                                    triggerId: BUTTON_INVITE_DROPDOWN,
+                                })
                             }}
                         >
-                            Add
+                            Can view
+                            <ChevronDownIcon className="ml-1 w-3 h-3" />
                         </button>
                     </div>
-                </div>
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center mb-2">
-                        <div className="w-7 h-7 rounded-2xl flex items-center justify-center cursor-pointer ml-2 bg-red-300 font-bold text-sm text-white">
-                            <span className="uppercase tracking-wider">
-                                {(user?.email || "").slice(0, 2)}
-                            </span>
-                        </div>
-                        <div
-                            className="ml-2 text-xs max-w-[200px] truncate"
-                            title={user?.email}
-                        >
-                            {user?.email}
-                        </div>
-                    </div>
-                    <div className="text-xs text-gray-400">Owner</div>
-                </div>
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center mb-2">
-                        <div className="w-7 h-7 rounded-2xl flex items-center justify-center cursor-pointer ml-2 bg-red-300 font-bold text-sm text-white">
-                            <span className="uppercase tracking-wider">
-                                {(user?.email || "").slice(0, 2)}
-                            </span>
-                        </div>
-                        <div
-                            className="ml-2 text-xs max-w-[200px] truncate"
-                            title={"email here"}
-                        >
-                            email here
-                        </div>
-                    </div>
                     <button
-                        id={BUTTON_ROLE_DROPDOWN}
-                        className="text-sm text-gray-400 flex items-center text-xs"
+                        className="ml-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-100 disabled:text-gray-400 text-white text-xs px-4 rounded-md"
+                        disabled={!EMAIL_VALIDATION.test(emailInput)}
                         onClick={() => {
-                            triggerDropdown({
-                                targetId: DROPDOWN_ROLE_MENU,
-                                triggerId: BUTTON_ROLE_DROPDOWN,
-                            })
+                            onSubmit(emailInput)
                         }}
                     >
-                        Can edit <ChevronDownIcon className="ml-1 w-3 h-3" />
+                        Add
                     </button>
                 </div>
-            </PopoverMenu>
+            </div>
+            <div className="flex items-center justify-between">
+                <div className="flex items-center mb-2">
+                    <div className="w-7 h-7 rounded-2xl flex items-center justify-center cursor-pointer ml-2 bg-red-300 font-bold text-sm text-white">
+                        <span className="uppercase tracking-wider">
+                            {(user?.email || "").slice(0, 2)}
+                        </span>
+                    </div>
+                    <div
+                        className="ml-2 text-xs max-w-[200px] truncate"
+                        title={user?.email}
+                    >
+                        {user?.email}
+                    </div>
+                </div>
+                <div className="text-xs text-gray-400">Owner</div>
+            </div>
+            <div className="flex items-center justify-between">
+                <div className="flex items-center mb-2">
+                    <div className="w-7 h-7 rounded-2xl flex items-center justify-center cursor-pointer ml-2 bg-red-300 font-bold text-sm text-white">
+                        <span className="uppercase tracking-wider">
+                            {(user?.email || "").slice(0, 2)}
+                        </span>
+                    </div>
+                    <div
+                        className="ml-2 text-xs max-w-[200px] truncate"
+                        title={"email here"}
+                    >
+                        email here
+                    </div>
+                </div>
+                <button
+                    id={BUTTON_ROLE_DROPDOWN}
+                    className="text-sm text-gray-400 flex items-center text-xs"
+                    onClick={() => {
+                        triggerDropdown({
+                            targetId: DROPDOWN_ROLE_MENU,
+                            triggerId: BUTTON_ROLE_DROPDOWN,
+                        })
+                    }}
+                >
+                    Can edit <ChevronDownIcon className="ml-1 w-3 h-3" />
+                </button>
+            </div>
             <DropdownMenu id={DROPDOWN_INVITE_MENU} className="w-28">
                 <button
                     className="transition hover:bg-gray-100 py-2 px-4 rounded-lg text-xs text-left"
@@ -140,6 +136,6 @@ export const PopoverShare = ({ id, onSubmit }) => {
                     Remove
                 </button>
             </DropdownMenu>
-        </>
+        </PopoverMenu>
     )
 }
