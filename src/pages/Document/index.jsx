@@ -35,7 +35,6 @@ const BUTTON_SHARE_ID = "share-button"
 export function Document() {
     document.title = PAGE_TITLES.DOCUMENT
     const { docId } = useParams()
-
     const [doc, setDoc] = useState(undefined)
     const [tempDoc, setTempDoc] = useState({})
     const [showNameInput, setShowNameInput] = useState(false)
@@ -47,7 +46,7 @@ export function Document() {
     const { workspaces, fetchWorkspaces } = useWorkspace()
 
     const [activePageId, setActivePageId] = useState(undefined)
-
+    const [selectedContent, setSelectedContent] = useState([])
     const { drawer } = useDrawer({ id: DRAWER_ID, shouldUpdate: doc })
     const { popover, triggerPopover } = usePopover()
     const navigate = useNavigate()
@@ -120,7 +119,6 @@ export function Document() {
                 setTempDoc(doc)
                 return
             }
-
             customToast.success("Changed name successfully!")
             const updatedDoc = { ...doc, ...response.results }
             setDoc(updatedDoc)
@@ -293,12 +291,14 @@ export function Document() {
                         </div>
                     </div>
                 </div>
-                <div className=" mx-12 mt-4">
+                <div className="mx-12 mt-4">
                     <div className="w-full">
                         <Board
                             listPages={doc.pages}
                             docId={doc.id}
                             activePageId={activePageId}
+                            setSelectedContent={setSelectedContent}
+                            selectedContent={selectedContent}
                         />
                     </div>
                 </div>

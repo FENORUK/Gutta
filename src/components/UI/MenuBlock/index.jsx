@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useContext } from "react"
 import {
     EyeIcon,
     EyeSlashIcon,
@@ -7,58 +7,43 @@ import {
     TrashIcon,
     ChevronDownIcon,
 } from "@heroicons/react/24/outline"
+import { BlockContext } from "../../../contexts/BlockContext"
 import { Tile } from "../Tile"
 import { MoveBlock } from "../MoveBlocks"
 import BlockService from "../../../services/blockService"
-import customToast from "../../../utils/toast"
 import { loader } from "../Loader"
+import { handlerError } from "../../../helper/helper"
 
 export function MenuBlock({
-    i: id,
     showTitle,
     setShowTitle,
     showMenu,
     setShowMenu,
-    setColor,
-    pages,
-    deleteBlock,
 }) {
+    const { deleteBlock, docId, blockId } = useContext(BlockContext)
+
     const handleShowTitle = async () => {
         loader.emit("start")
-        const response = await BlockService.updateBlock(id, {
+        const response = await BlockService.updateBlock(docId, blockId, {
             is_title_hidden: Number(showTitle),
         })
         loader.emit("stop")
-
-        if (response.error) {
-            const {
-                error: { message },
-            } = response
-            customToast.error(message)
-            return
-        }
+        handlerError(response)
         setShowTitle(!showTitle)
         setShowMenu(!showMenu)
     }
 
     const handleDelete = async () => {
+        deleteBlock(blockId)
         loader.emit("start")
-        const response = await BlockService.deleteBlockById(id)
-        deleteBlock(id)
+        const response = await BlockService.deleteBlockById(docId, blockId)
         loader.emit("stop")
-
-        if (response.error) {
-            const {
-                error: { message },
-            } = response
-            customToast.error(message)
-            return
-        }
+        handlerError(response)
     }
 
     return (
         <div
-            className="w-52 h-48 absolute right-0 top-5"
+            className="w-52 h-48 absolute right-0 top-0"
             style={{ cursor: "pointer" }}
         >
             <div className="menuBlock h-full shadow-lg bg-white rounded-lg border">
@@ -86,18 +71,14 @@ export function MenuBlock({
                         <ArrowRightCircleIcon className="w-4 h-4 inline mx-2" />
                         <span>Move to</span>
                         <ChevronDownIcon className="w-4 h-4 inline mx-2 float-right mt-1" />
-                        <MoveBlock
-                            i={id}
-                            pages={pages}
-                            deleteBlock={deleteBlock}
-                        />
+                        <MoveBlock />
                     </div>
 
                     <div className="py-2 my-1 group hover:bg-gray-200 rounded-lg hover:text-neutral-800">
                         <PaintBrushIcon className="w-4 h-4 inline mx-2" />
                         <span>Tile style</span>
                         <ChevronDownIcon className="w-4 h-4 inline mx-2 float-right mt-1" />
-                        <Tile i={id} setColor={setColor} />
+                        <Tile />
                     </div>
 
                     <button

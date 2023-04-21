@@ -2,7 +2,8 @@ import { StarIcon, UserIcon, UsersIcon } from "@heroicons/react/24/solid"
 import { generatePath } from "react-router-dom"
 export const EMAIL_VALIDATION = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/
 export const PASSWORD_VALIDATION = /^[a-zA-Z0-9]{6,}/
-export const MIN_WIDTH = 6
+
+export const MIN_WIDTH = 9
 export const MIN_HEIGHT = 4
 export const GRID_SIZE = 25
 export const COLUMNS_NUMBER = 48
@@ -10,6 +11,11 @@ export const DOCUMENT_WIDTH = 1200
 export const PAGE_SCROLL_WIDTH = 1080
 export const MINIMUM_DISTANCE = 15
 export const MAXIMUM_PAGES_NUMBER = 16
+export const BLOCK_EXPAND = 4
+export const IMAGE_EXPAND = 4
+export const IMAGE_HEIGHT = 3
+export const TEXT_EXPAND = 1
+export const TASK_EXPAND = 1
 
 export const DEFAULT_TITLE = "Untitled"
 
@@ -41,11 +47,13 @@ export const PAGE_TITLES = {
 
 export const COLOR = [
     { key: "gray", body: "bg-gray-300" },
-    { key: "red", body: "bg-red-100" },
+    { key: "pink", body: "bg-red-100" },
     { key: "blue", body: "bg-cyan-100" },
     { key: "purple", body: "bg-fuchsia-100" },
     { key: "orange", body: "bg-orange-200" },
     { key: "lime", body: "bg-lime-200" },
+    { key: "red", body: "bg-red-400" },
+    { key: "yellow", body: "bg-amber-200" },
     { key: "white", body: "bg-white" },
 ]
 

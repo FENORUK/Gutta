@@ -1,11 +1,18 @@
-import { GRID_SIZE, MIN_HEIGHT, MIN_WIDTH } from "../utils/constants"
+import customToast from "../utils/toast"
 import { loader } from "../components/UI/Loader"
 import BlockService from "../services/blockService"
-import customToast from "../utils/toast"
+import { GRID_SIZE, MIN_HEIGHT, MIN_WIDTH } from "../utils/constants"
 
 export function extractValues(str) {
     const [first, last] = str.split("x")
     return [Number(first), Number(last)]
+}
+
+export function handlerError(response){
+    if (response.error) {
+        customToast.error(response.error.message)
+        return
+    }
 }
 
 export const convertCoordinates = (startPoint, endPoint) => {
@@ -20,24 +27,17 @@ export const convertCoordinates = (startPoint, endPoint) => {
         w: width <= MIN_WIDTH ? MIN_WIDTH : width,
         h: height <= MIN_HEIGHT ? MIN_HEIGHT : height,
     }
-
     return attributeBlock
 }
 
-export const handleUpdateBlock = async (oldItem, newItem) => {
+export const handleUpdateBlock = async (documentId, oldItem, newItem) => {
     const updateBlock = oldItem.find((item) => item.i === newItem.i)
 
     loader.emit("start")
-    const response = await BlockService.updateBlock(updateBlock.i, {
+    const response = await BlockService.updateBlock(documentId, updateBlock.i, {
         position: String(`${updateBlock.x}x${updateBlock.y}`),
         size: String(`${updateBlock.w}x${updateBlock.h}`),
     })
     loader.emit("stop")
-    if (response.error) {
-        const {
-            error: { message },
-        } = response
-        customToast.error(message)
-        return
-    }
+    handlerError(response)
 }

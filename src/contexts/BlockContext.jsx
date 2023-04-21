@@ -1,50 +1,57 @@
-import React from "react"
+import React, { useState } from "react"
 import BlockService from "../services/blockService"
-import customToast from "../utils/toast"
 import { loader } from "../components/UI/Loader"
+import { handlerError } from "../helper/helper"
 
 export const BlockContext = React.createContext()
 
-export const BlockProvider = ({ children }) => {
-    const handleInput = async (event, id) => {
-        if (event.key === "Enter") {
-            loader.emit("start")
-            event.preventDefault()
-            const inputValue = event.target.value
-            const response = await BlockService.updateBlock(id, {
-                title: inputValue,
-            })
-            loader.emit("stop")
-            if (response.error) {
-                const {
-                    error: { message },
-                } = response
-                customToast.error(message)
-                return
-            }
-        }
-    }
+export const BlockProvider = ({
+    docId,
+    blockId,
+    children,
+    channel,
+    socketId,
+    block,
+    listPages,
+    height,
+    deleteBlock,
+    color: ogColor,
+    selectedContent,
+    setPreviewImage,
+    setShowPreviewImage,
+    setShowUpImage,
+    setSelectedContent,
+}) => {
+    const [color, setColor] = useState(ogColor || "bg-white")
 
-    const updateColor = async (color, id) => {
+    const updateColor = async (color, blockId) => {
         loader.emit("start")
-        const response = await BlockService.updateBlock(id, {
+        const response = await BlockService.updateBlock(docId, blockId, {
             color: color,
         })
         loader.emit("stop")
-        if (response.error) {
-            const {
-                error: { message },
-            } = response
-            customToast.error(message)
-            return
-        }
+        handlerError(response)
+        setColor(color)
     }
 
     return (
         <BlockContext.Provider
             value={{
+                color,
+                docId,
+                height,
+                block,
+                blockId,
+                channel,
+                socketId,
+                listPages,
                 updateColor,
-                handleInput,
+                deleteBlock,
+                selectedContent,
+                setPreviewImage,
+                setShowPreviewImage,
+                setShowUpImage,
+                setSelectedContent,
             }}
         >
             {children}

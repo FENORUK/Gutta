@@ -1,24 +1,20 @@
-import React from "react"
-import customToast from "../../../utils/toast"
+import React, { useContext } from "react"
 import BlockService from "../../../services/blockService"
+import { BlockContext } from "../../../contexts/BlockContext"
 import { loader } from "../Loader"
+import { handlerError } from "../../../helper/helper"
 
-export function MoveBlock({ i: id, pages, deleteBlock }) {
+export function MoveBlock() {
+    const { listPages, deleteBlock, docId,blockId } = useContext(BlockContext)
+
     const handleChangePage = async (pageId) => {
+        deleteBlock(blockId)
         loader.emit("start")
-        const response = await BlockService.updateBlock(id, {
+        const response = await BlockService.updateBlock(docId, blockId, {
             page_id: pageId,
         })
         loader.emit("stop")
-
-        if (response.error) {
-            const {
-                error: { message },
-            } = response
-            customToast.error(message)
-            return
-        }
-        deleteBlock(id)
+        handlerError(response)
     }
 
     return (
@@ -28,14 +24,14 @@ export function MoveBlock({ i: id, pages, deleteBlock }) {
                     <div className="text-xs font-bold uppercase py-2">
                         PAGES:
                     </div>
-                    {pages.map((page) => (
+                    {listPages.map((page) => (
                         <div
                             key={page.id}
                             className="text-neutral-500"
                             onClick={() => handleChangePage(page.id)}
                         >
                             <div className="w-full h-8 flex font-normal items-center hover:bg-gray-200 rounded-lg hover:text-neutral-800">
-                                <div className="px-2">{page.name}</div>
+                                <div className="p-2">{page.name}</div>
                             </div>
                         </div>
                     ))}
