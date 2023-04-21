@@ -56,6 +56,21 @@ const blockService = () => {
             }
         },
 
+        editListBLock: async(documentId, data) => {
+            try {
+                const apiResponse = await axios.put(
+                    `document/${documentId}/block`,
+                    data,
+                    {
+                        headers: getHeaders(),
+                    }
+                )
+                return apiResponse
+            } catch (error) {
+                return { error }
+            }
+        },
+
         deleteBlockById: async (documentId, blockId) => {
             try {
                 const apiResponse = await axios.delete(

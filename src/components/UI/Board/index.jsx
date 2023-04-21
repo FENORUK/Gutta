@@ -4,7 +4,7 @@ import get from "lodash/get"
 import ReactGridLayout from "react-grid-layout"
 import "/node_modules/react-resizable/css/styles.css"
 import "/node_modules/react-grid-layout/css/styles.css"
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState, useCallback } from "react"
 
 import "./index.css"
 import { Block } from "../Block"
@@ -201,7 +201,6 @@ export const Board = ({
 
     const showBlocks = () => {
         return blocks.map((block, index) => {
-            if (block.w === 0) return <></>
             return (
                 <div key={block.i}>
                     <BlockProvider
@@ -238,24 +237,49 @@ export const Board = ({
         })
     }
 
-    const handleLayoutChange = (layout) => {
-        const updatedLayout = layout.map((updatingBlock) => {
-            const mappedBlock = blocks.find(
-                (block) => block.i === updatingBlock.i
-            )
-            if (!mappedBlock) {
-                return updatingBlock
+    const handleLayoutChange = useCallback(
+        async (layout) => {
+            const changes = []
+
+            const comparator = (
+                { x, y, w, h },
+                { x: x2, y: y2, w: w2, h: h2 }
+            ) => x !== x2 || y !== y2 || w !== w2 || h !== h2
+
+            let checkUpdate = true
+
+            for (const updatingBlock of layout) {
+                const { i, x, y, w, h } = updatingBlock
+                const mappedBlock = blocks.find((block) => block.i === i)
+
+                if (!mappedBlock) {
+                    continue
+                }
+
+                if (comparator(mappedBlock, updatingBlock)) {
+                    changes.push({
+                        id: i,
+                        size: `${w}x${h}`,
+                        position: `${x}x${y}`,
+                    })
+                }
+
+                Object.assign(mappedBlock, { x, y, w, h })
             }
-            return {
-                ...mappedBlock,
-                x: updatingBlock.x,
-                y: updatingBlock.y,
-                w: updatingBlock.w,
-                h: updatingBlock.h,
+
+            setBlocks(layout)
+
+            if (checkUpdate && changes.length > 0) {
+                loader.emit("start")
+                const response = await BlockService.editListBLock(docId, {
+                    blocks: changes,
+                })
+                loader.emit("stop")
+                handlerError(response)
             }
-        })
-        setBlocks(updatedLayout)
-    }
+        },
+        [blocks, docId, setBlocks]
+    )
 
     return (
         <div
