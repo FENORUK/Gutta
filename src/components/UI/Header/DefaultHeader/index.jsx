@@ -77,48 +77,51 @@ export function DefaultHeader() {
                     <BellIcon />
                 </div>
             </IconButton>
-
-            <div
-                id={USER_AVATAR_ID}
-                className="w-8 h-8 rounded-2xl flex items-center justify-center cursor-pointer ml-2 bg-red-300 font-bold text-sm text-white"
-                onClick={() => {
-                    triggerPopover({
-                        targetId: USER_SETTING_MENU_ID,
-                        triggerId: USER_AVATAR_ID,
-                    })
-                }}
-            >
-                <span className="uppercase tracking-wider">
-                    {(user?.email || "").slice(0, 2)}
-                </span>
-            </div>
-            {isNotify && (
-                <div class="absolute flex h-2.5 w-2.5 right-11 top-9 ">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-300"></span>
-                </div>
-            )}
-            {isShown && isOutside && (
+            <div className="relative">
                 <div
-                    ref={ref}
-                    className="absolute right-12 top-12 rounded-md w-96 border bg-gray-100  bg-white overflow-auto overflow-x-hidden"
-                    style={{ minHeight: 150, maxHeight: 510 }}
+                    id={USER_AVATAR_ID}
+                    className="w-8 h-8 rounded-2xl flex items-center justify-center cursor-pointer ml-2 bg-red-300 font-bold text-sm text-white"
+                    onClick={() => {
+                        triggerPopover({
+                            targetId: USER_SETTING_MENU_ID,
+                            triggerId: USER_AVATAR_ID,
+                        })
+                    }}
                 >
-                    <p className="ml-6 mr-3 mt-3 mb-2.5 border-b-2 border-green-50 text-lg py-3 font-bold">
-                        Notifications
-                    </p>
-                    {data?.length ? (
-                        data.map((item) => <Notification data={item} />)
-                    ) : (
-                        <div className="flex flex-col items-center text-gray-400">
-                            <BellIcon className="w-10 h-10 mt-6" />
-                            <p className="mb-2.5 p-3 w-96 text-center break-words text-sm">
-                                You have no unread messages
-                            </p>
-                        </div>
-                    )}
+                    <span className="uppercase tracking-wider">
+                        {(user?.email || "").slice(0, 2)}
+                    </span>
                 </div>
-            )}
+                {isNotify && (
+                    <div class="absolute flex h-2.5 w-2.5 right-11 top-6">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-300"></span>
+                    </div>
+                )}
+            </div>
+            <div className="relative z-50">
+                {isShown && isOutside && (
+                    <div
+                        ref={ref}
+                        className="absolute right-12 top-5 rounded-md w-96 border bg-gray-100  bg-white overflow-auto overflow-x-hidden"
+                        style={{ minHeight: 150, maxHeight: 510 }}
+                    >
+                        <p className="ml-6 mr-3 mt-3 mb-2.5 border-b-2 border-green-50 text-lg py-3 font-bold">
+                            Notifications
+                        </p>
+                        {data?.length ? (
+                            data.map((item) => <Notification data={item} />)
+                        ) : (
+                            <div className="flex flex-col items-center text-gray-400">
+                                <BellIcon className="w-10 h-10 mt-6" />
+                                <p className="mb-2.5 p-3 w-96 text-center break-words text-sm">
+                                    You have no unread messages
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
             <PopoverMenu id={USER_SETTING_MENU_ID}>
                 <IconButton
                     className="rounded-lg text-gray-400 bg-white hover:text-black hover:bg-gray-100 w-full px-3 py-1.5"
