@@ -65,6 +65,8 @@ export const MESSAGE = {
     INVALID_PASSWORD_LENGTH: "The password must be at least 6 characters",
     PASSWORDS_NOT_THE_SAME: "Password and Confirm password must be the same",
     PAGES_NUMBER_REACH_MAXIMUM: "Pages number has reached the maximum",
+    INVITE_EMAIL_SENT: "Email sent",
+    UPDATE_ROLE_SUCCESS: "Update role successed",
 }
 export const DEFAULT_TEMP = { i: "temp" }
 
@@ -81,4 +83,10 @@ export const PAGES = {
         Icon: StarIcon,
         name: "Favorites",
     },
+}
+
+export const USER_ROLE = {
+    OWNER: { name: "OWNER", title: "Owner" },
+    EDIT: { name: "EDIT", title: "Can edit" },
+    VIEW: { name: "VIEW", title: "Can view" },
 }

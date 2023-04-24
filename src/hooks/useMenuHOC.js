@@ -2,10 +2,11 @@ import { useState } from "react"
 
 export const useMenuHOC = ({ Menu, defaultOptions }) => {
     const [menu, setMenu] = useState(undefined)
-    const [menuOptions, setMenuOptions] = useState({
+    const defaultMenuOptions = {
         targetId: "",
         triggerId: "",
-    })
+    }
+    const [menuOptions, setMenuOptions] = useState(defaultMenuOptions)
 
     const create = ({ targetId, triggerId, options }) => {
         if (!targetId || !triggerId) return
@@ -40,5 +41,9 @@ export const useMenuHOC = ({ Menu, defaultOptions }) => {
         newMenu.show()
         setMenu(newMenu)
     }
-    return { menu, trigger }
+    const clearMenu = () => {
+        setMenu(undefined)
+        setMenuOptions(defaultMenuOptions)
+    }
+    return { menu, trigger, clearMenu }
 }

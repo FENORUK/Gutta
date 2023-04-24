@@ -6,13 +6,20 @@ import { IconButton } from "../../components/UI/IconButton"
 import { SideBar } from "../../components/UI/SideBar"
 import { useDrawer } from "../../hooks/useDrawer"
 import DocumentService from "../../services/documentService"
-import { DEFAULT_TITLE, PAGE_TITLES, PATH } from "../../utils/constants"
+import {
+    DEFAULT_TITLE,
+    MESSAGE,
+    PAGE_TITLES,
+    PATH,
+    USER_ROLE,
+} from "../../utils/constants"
 import "react-toastify/dist/ReactToastify.css"
 import { ReactComponent as LockIcon } from "../../assets/lock.svg"
 import {
     ArrowUpTrayIcon,
     Bars3Icon,
     UserCircleIcon,
+    UserGroupIcon,
 } from "@heroicons/react/24/solid"
 import {
     ChatBubbleOvalLeftEllipsisIcon,
@@ -27,14 +34,26 @@ import { PageNavigation } from "../../components/UI/PageNavigation"
 import { useWorkspace } from "../../hooks/useWorkspace"
 import { usePopover } from "../../hooks/usePopover"
 import { PopoverShare } from "./PopoverShare"
+import clsx from "clsx"
+import { useContext } from "react"
+import { AuthContext } from "../../contexts/AuthContext"
 
 const DRAWER_ID = "drawer-navigation"
 const SHARE_MENU_ID = "menu-id"
 const BUTTON_SHARE_ID = "share-button"
 
+const fetchUsersRoleDocument = async (docId) => {
+    const response = await DocumentService.getUsersRoleDocument({
+        documentId: docId,
+    })
+    return response?.results
+}
+
 export function Document() {
     document.title = PAGE_TITLES.DOCUMENT
     const { docId } = useParams()
+
+    const { fetchUserInfo } = useContext(AuthContext)
     const [doc, setDoc] = useState(undefined)
     const [tempDoc, setTempDoc] = useState({})
     const [showNameInput, setShowNameInput] = useState(false)
@@ -43,6 +62,10 @@ export function Document() {
         name: "",
         url: "",
     })
+    const [roleData, setRoleData] = useState({
+        userRole: USER_ROLE.VIEW.name,
+        listRole: [],
+    })
     const { workspaces, fetchWorkspaces } = useWorkspace()
 
     const [activePageId, setActivePageId] = useState(undefined)
@@ -50,6 +73,9 @@ export function Document() {
     const { drawer } = useDrawer({ id: DRAWER_ID, shouldUpdate: doc })
     const { popover, triggerPopover } = usePopover()
     const navigate = useNavigate()
+
+    const isViewRole = roleData.userRole === USER_ROLE.VIEW.name
+    const isEditRole = roleData.userRole === USER_ROLE.EDIT.name
 
     useEffect(() => {
         const fetchDocuments = async () => {
@@ -65,7 +91,11 @@ export function Document() {
                 results: { 0: document, is_favourite, is_owner },
             } = response
             setFavorites(is_favourite)
-            const newWorkspaces = await fetchWorkspaces()
+            const [newWorkspaces, listRole, userInfor] = await Promise.all([
+                fetchWorkspaces(),
+                fetchUsersRoleDocument(docId),
+                fetchUserInfo(),
+            ])
             setDoc(document)
             setTempDoc(document)
             setActivePageId(document.pages[0]?.id)
@@ -73,6 +103,13 @@ export function Document() {
                 workspaces: newWorkspaces,
                 document: document,
                 is_owner: is_owner,
+            })
+            setRoleData({
+                userRole: is_owner
+                    ? USER_ROLE.OWNER.name
+                    : listRole.find((role) => role.email === userInfor.email)
+                          ?.role,
+                listRole: [...listRole],
             })
         }
         fetchDocuments()
@@ -143,6 +180,77 @@ export function Document() {
         setFavorites(isFavorite)
     }
 
+    const handleShareDocument = async (email, role) => {
+        const response = await DocumentService.shareDocument({
+            documentId: doc?.id,
+            data: { role: role, email: email },
+        })
+        if (response.error) {
+            const {
+                error: { message },
+            } = response
+            customToast.error(message)
+            setTempDoc(doc)
+            return
+        }
+        setRoleData({
+            ...roleData,
+            ...{ listRole: [...(await fetchUsersRoleDocument(docId))] },
+        })
+        customToast.success(MESSAGE.INVITE_EMAIL_SENT)
+    }
+
+    const handleUpdateRoleDocument = async (userRoleId, userRole) => {
+        const response = await DocumentService.updateUsersRoleDocument({
+            userRoleId,
+            userRole,
+        })
+        if (response.error) {
+            const {
+                error: { message },
+            } = response
+            customToast.error(message)
+            setTempDoc(doc)
+            return
+        }
+        const {
+            results: { id, role },
+        } = response
+        setRoleData({
+            ...roleData,
+            ...{
+                listRole: roleData?.listRole.map((itemRole) => {
+                    return itemRole?.id !== id
+                        ? itemRole
+                        : { ...itemRole, ...{ role: role } }
+                }),
+            },
+        })
+        customToast.success(MESSAGE.UPDATE_ROLE_SUCCESS)
+    }
+    const handleRemoveUserRoleDocument = async (userRoleId) => {
+        const response = await DocumentService.removeUsersRoleDocument({
+            documentId: docId,
+            userRoleId: userRoleId,
+        })
+        if (response.error) {
+            const {
+                error: { message },
+            } = response
+            customToast.error(message)
+            setTempDoc(doc)
+            return
+        }
+        setRoleData({
+            ...roleData,
+            ...{ listRole: [...(await fetchUsersRoleDocument(docId))] },
+        })
+        const {
+            results: { message },
+        } = response
+        customToast.success(message)
+    }
+
     if (!doc) return <></>
 
     return (
@@ -194,6 +302,7 @@ export function Document() {
                                             className="text-2xl max-w-[290px] truncate"
                                             title={tempDoc.name}
                                             onClick={() => {
+                                                if (isViewRole) return
                                                 setShowNameInput(!showNameInput)
                                             }}
                                         >
@@ -233,7 +342,7 @@ export function Document() {
                                             )}
                                         </IconButton>
                                     </div>
-                                    {showNameInput && (
+                                    {showNameInput && !isViewRole && (
                                         <input
                                             autoFocus
                                             type="text"
@@ -257,27 +366,41 @@ export function Document() {
                                     )}
                                 </div>
                                 <div className="flex">
-                                    <IconButton
-                                        id={BUTTON_SHARE_ID}
-                                        className="text-sm px-3 text-black bg-red-100 hover:bg-red-300 justify-center"
-                                        title="Private to only me"
-                                        onClick={() => {
-                                            triggerPopover({
-                                                targetId: SHARE_MENU_ID,
-                                                triggerId: BUTTON_SHARE_ID,
-                                            })
-                                        }}
-                                    >
-                                        <LockIcon className="w-4 h-4 mr-2.5" />
-                                        Share
-                                    </IconButton>
+                                    {!isViewRole && (
+                                        <>
+                                            <IconButton
+                                                id={BUTTON_SHARE_ID}
+                                                className="text-sm px-3 text-black bg-red-100 hover:bg-red-300 justify-center"
+                                                title="Private to only me"
+                                                onClick={() => {
+                                                    triggerPopover({
+                                                        targetId: SHARE_MENU_ID,
+                                                        triggerId:
+                                                            BUTTON_SHARE_ID,
+                                                    })
+                                                }}
+                                            >
+                                                {isEditRole ? (
+                                                    <>
+                                                        <UserGroupIcon className="w-4 h-4 mr-2.5" />
+                                                        Members
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <LockIcon className="w-4 h-4 mr-2.5" />
+                                                        Share
+                                                    </>
+                                                )}
+                                            </IconButton>
 
-                                    <IconButton
-                                        className="ml-2 px-2 h-8 text-gray-400 hover:text-black"
-                                        title="Export menu"
-                                    >
-                                        <ArrowUpTrayIcon className="w-4 h-4" />
-                                    </IconButton>
+                                            <IconButton
+                                                className="ml-2 px-2 h-8 text-gray-400 hover:text-black"
+                                                title="Export menu"
+                                            >
+                                                <ArrowUpTrayIcon className="w-4 h-4" />
+                                            </IconButton>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -286,13 +409,14 @@ export function Document() {
                                 docId={docId}
                                 listPages={doc.pages}
                                 activePageId={activePageId}
+                                isOnlyViewPages={isViewRole}
                                 setActivePageId={setActivePageId}
                             />
                         </div>
                     </div>
                 </div>
-                <div className="mx-12 mt-4">
-                    <div className="w-full">
+                <div className=" mx-12 mt-4">
+                    <div className={clsx("w-full", isViewRole && "relative")}>
                         <Board
                             listPages={doc.pages}
                             docId={doc.id}
@@ -300,6 +424,9 @@ export function Document() {
                             setSelectedContent={setSelectedContent}
                             selectedContent={selectedContent}
                         />
+                        {isViewRole && (
+                            <div className="absolute top-0 right-0 w-full h-full bg-transparent"></div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -317,8 +444,17 @@ export function Document() {
             </div>
             <PopoverShare
                 id={SHARE_MENU_ID}
-                onSubmit={(email) => {
+                roleData={roleData}
+                onSubmit={(email, role) => {
                     popover.hide()
+                    handleShareDocument(email, role)
+                }}
+                updateListRole={(userRoleId, role) => {
+                    handleUpdateRoleDocument(userRoleId, role)
+                }}
+                removeUserRole={(userRoleId) => {
+                    popover.hide()
+                    handleRemoveUserRoleDocument(userRoleId)
                 }}
             />
         </div>

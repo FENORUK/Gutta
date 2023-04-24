@@ -19,6 +19,7 @@ export const PageNavigation = ({
     docId,
     listPages,
     activePageId,
+    isOnlyViewPages,
     setActivePageId,
 }) => {
     const [showRenameInput, setShowRenameInput] = useState(false)
@@ -66,6 +67,7 @@ export const PageNavigation = ({
                     id: BUTTON_ADD_ID,
                     title: "Add a page",
                     onClick: () => {
+                        if (isOnlyViewPages) return
                         setTempPageName("")
                         triggerPopover({
                             targetId: POPOVER_ADD_ID,
@@ -85,6 +87,7 @@ export const PageNavigation = ({
                             isActive={id === activePageId}
                             onClick={setActivePageId}
                             onMenuClick={(pageId) => {
+                                if (isOnlyViewPages) return
                                 setShowRenameInput(false)
                                 setSelectedPageId(pageId)
                                 triggerPopover({

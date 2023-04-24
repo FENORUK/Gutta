@@ -4,10 +4,7 @@ import { useState } from "react"
 import { useEffect } from "react"
 import { PAGES, PATH } from "../../utils/constants"
 import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid"
-import {
-    StarIcon as OutlineStarIcon,
-    XCircleIcon,
-} from "@heroicons/react/24/outline"
+import { StarIcon as OutlineStarIcon } from "@heroicons/react/24/outline"
 import { StarIcon as SolidStarIcon } from "@heroicons/react/24/solid"
 import { IconButton } from "../../components/UI/IconButton"
 import { useDocument } from "../../hooks/useDocument"
@@ -42,7 +39,7 @@ export const Workspace = () => {
         deleteWorkspace,
     } = useWorkspace()
 
-    const { popover, triggerPopover } = usePopover()
+    const { popover, triggerPopover, clearPopover } = usePopover()
     const { modal, triggerModal } = useModal()
     const {
         documents,
@@ -60,6 +57,7 @@ export const Workspace = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            clearPopover()
             const newWorkspaces = await fetchWorkspaces()
             let workspace = PAGES[workspaceId]?.name
                 ? { id: workspaceId, name: PAGES[workspaceId]?.name }
@@ -144,8 +142,6 @@ export const Workspace = () => {
             currentWorkspace?.name === PAGES.personal.name) ||
         workspaces?.find((workspace) => workspace.id === workspaceId)
 
-    const isSharedWorkspace =
-        isDefaultWorkspace && currentWorkspace?.name === PAGES.shared.name
     const isFavouriteWorkspace =
         isDefaultWorkspace && currentWorkspace?.name === PAGES.favorite.name
 
@@ -231,18 +227,6 @@ export const Workspace = () => {
                     >
                         <TrashIcon className="w-3.5 h-3.5 mr-2.5" />
                         Delete
-                    </IconButton>
-                )}
-
-                {isSharedWorkspace && (
-                    <IconButton
-                        className="transition w-full px-3 py-1.5 mb-1.5 bg-white hover:bg-gray-100 text-sm text-gray-400 hover:text-black rounded-lg pr-8"
-                        onClick={() => {
-                            popover.hide()
-                        }}
-                    >
-                        <XCircleIcon className="w-3.5 h-3.5 mr-2.5" />
-                        Remove from shared
                     </IconButton>
                 )}
             </PopoverMenu>
