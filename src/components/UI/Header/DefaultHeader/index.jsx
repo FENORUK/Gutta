@@ -34,6 +34,9 @@ export function DefaultHeader() {
             setIsNotify(response.results.check)
         }
         dataFetch()
+        return () => {
+            channel.unbind("share-document")
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -109,14 +112,16 @@ export function DefaultHeader() {
                 )}
             </div>
             <PopoverMenu id={USER_SETTING_MENU_ID} className="px-6">
-                <div className="text-lg font-semibold py-2.5">Profile</div>
+                <div className="text-lg font-semibold py-2.5 cursor-default">
+                    Profile
+                </div>
                 <div className="flex items-center pt-1.5 pb-4 border-b">
                     <div className="w-9 h-9 rounded-3xl flex items-center justify-center cursor-pointer bg-rose-500 font-bold text-sm text-white">
                         <span className="uppercase tracking-wider">
                             {(user?.email || "").slice(0, 2)}
                         </span>
                     </div>
-                    <div className="ml-3 text-blue-600 text-sm">
+                    <div className="ml-3 text-black text-sm w-64 truncate cursor-default">
                         {user?.email}
                     </div>
                 </div>

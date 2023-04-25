@@ -171,6 +171,7 @@ export const Board = ({
             channel.unbind("updateColorBlock")
             channel.unbind("updatePageBlock")
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [blocks, activePageId])
 
     useEffect(() => {
@@ -435,7 +436,8 @@ export const Board = ({
                 })
             }
         },
-        [blocks, docId, setBlocks, activePageId]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [blocks, docId, setBlocks]
     )
 
     return (

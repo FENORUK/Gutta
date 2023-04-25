@@ -91,10 +91,17 @@ export function Document() {
                 setTempDoc({ ...doc, ...{ name: data.message.data.title } })
             }
         })
+
+        channel.bind("userJoined", () => {
+            fetchRoleDataDocument()
+        })
+
         return () => {
             channel.unbind("changeTitle")
+            channel.unbind("userJoined")
         }
-    }, [])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [roleData])
 
     useEffect(() => {
         const fetchDocuments = async () => {
@@ -135,6 +142,13 @@ export function Document() {
         fetchDocuments()
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [docId])
+
+    const fetchRoleDataDocument = async () => {
+        setRoleData({
+            ...roleData,
+            ...{ listRole: [...(await fetchUsersRoleDocument(docId))] },
+        })
+    }
 
     const setCurrentWorkspaceData = ({ workspaces, document, is_owner }) => {
         if (is_owner) {
@@ -218,10 +232,7 @@ export function Document() {
             setTempDoc(doc)
             return
         }
-        setRoleData({
-            ...roleData,
-            ...{ listRole: [...(await fetchUsersRoleDocument(docId))] },
-        })
+        fetchRoleDataDocument()
         customToast.success(MESSAGE.INVITE_EMAIL_SENT)
     }
 
@@ -266,10 +277,7 @@ export function Document() {
             setTempDoc(doc)
             return
         }
-        setRoleData({
-            ...roleData,
-            ...{ listRole: [...(await fetchUsersRoleDocument(docId))] },
-        })
+        fetchRoleDataDocument()
         const {
             results: { message },
         } = response
@@ -284,6 +292,10 @@ export function Document() {
                     setActivePageId(newPage.listPages[0]?.id)
             }
         })
+        return () => {
+            channel.unbind("page")
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     if (!doc) return <></>
@@ -334,7 +346,10 @@ export function Document() {
                                 <div className="flex relative">
                                     {!showNameInput && (
                                         <div
-                                            className="text-2xl max-w-[290px] truncate"
+                                            className={clsx(
+                                                "text-2xl max-w-[290px] truncate",
+                                                isViewRole && "cursor-default"
+                                            )}
                                             title={tempDoc.name}
                                             onClick={() => {
                                                 if (isViewRole) return
