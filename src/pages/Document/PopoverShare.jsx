@@ -74,13 +74,14 @@ export const PopoverShare = ({
                                     className="border-none w-72 h-8 focus:ring-0 bg-gray-100 py-1 pl-2 pr-24 text-xs rounded-md"
                                     value={emailInput}
                                     onChange={(event) => {
+                                        console.log(event.target.value)
                                         setEmailInput(event.target.value)
                                     }}
                                     onKeyDown={handleKeyDown}
                                 />
                                 <button
                                     id={BUTTON_INVITE_DROPDOWN}
-                                    className="absolute right-2 top-2 text-sm text-gray-400 flex items-center text-xs"
+                                    className="absolute right-2 top-2 text-sm text-slate-500 flex items-center text-xs"
                                     onClick={() => {
                                         triggerDropdown({
                                             targetId: DROPDOWN_INVITE_MENU,
@@ -94,7 +95,7 @@ export const PopoverShare = ({
                             </div>
 
                             <button
-                                className="ml-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-100 disabled:text-gray-400 text-white text-xs px-4 rounded-md"
+                                className="ml-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-100 disabled:text-slate-500 text-white text-xs px-4 rounded-md"
                                 disabled={
                                     !EMAIL_VALIDATION.test(emailInput) ||
                                     emailInput === user?.email
@@ -112,15 +113,23 @@ export const PopoverShare = ({
             </div>
 
             {roleData?.listRole.map(({ id, role, email, is_accepted }) => (
-                <div className="flex items-center justify-between" key={id}>
+                <div
+                    className="flex items-center justify-between text-slate-500"
+                    key={id}
+                >
                     <div className="flex items-center mb-2">
-                        <div className="w-7 h-7 rounded-2xl flex items-center justify-center cursor-pointer ml-2 bg-red-300 font-bold text-xs text-white">
+                        <div className="w-7 h-7 rounded-2xl flex items-center justify-center cursor-pointer ml-2 bg-rose-500 font-bold text-xs text-white">
                             <span className="uppercase tracking-wider">
                                 {(email || "").slice(0, 2)}
                             </span>
                         </div>
                         <div
-                            className="ml-2 text-xs max-w-[200px] truncate"
+                            className={clsx(
+                                "ml-2 text-xs max-w-[200px] truncate",
+                                is_accepted === 0
+                                    ? "text-gray-400"
+                                    : "text-black"
+                            )}
                             title={email}
                         >
                             {email}
@@ -129,9 +138,10 @@ export const PopoverShare = ({
                     <div
                         id={id}
                         className={clsx(
-                            "text-xs text-gray-400 flex items-center text-xs mb-2",
-                            allowEditUserRole({ role, is_accepted }) &&
-                                "cursor-pointer"
+                            "text-xs flex items-center text-xs mb-2",
+                            allowEditUserRole({ role, is_accepted })
+                                ? "cursor-pointer text-slate-500"
+                                : is_accepted === 0 && "text-gray-400"
                         )}
                         onClick={() => {
                             if (

@@ -59,26 +59,26 @@ export const UpLoadImage = ({
                         </div>
                         <div className="mx-auto rounded-lg border text-gray-300 border-gray-200 my-14 py-14 px-12 w-8/12 h-72 bg-gray-100 hover:bg-gray-50 flex align-middle justify-center items-center">
                             <div className="w-full">
-                                <div class="flex items-center justify-center w-full">
+                                <div className="flex items-center justify-center w-full">
                                     <label
                                         for="dropzone-file"
-                                        class="flex flex-col items-center justify-center w-80 rounded-lg cursor-pointer"
+                                        className="flex flex-col items-center justify-center w-80 rounded-lg cursor-pointer"
                                     >
-                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                             <PhotoIcon className="w-10 h-10 mx-auto mb-4" />
-                                            <p class="mb-2 w-full flex justify-center text-sm text-gray-500">
-                                                <span class="font-semibold">
+                                            <p className="mb-2 w-full flex justify-center text-sm text-slate-500">
+                                                <span className="font-semibold">
                                                     Click to upload
                                                 </span>
                                             </p>
-                                            <p class="text-xs text-gray-500">
+                                            <p className="text-xs text-slate-500">
                                                 JPEG, PNG, JPG or GIF
                                             </p>
                                         </div>
                                         <input
                                             id="dropzone-file"
                                             type="file"
-                                            class="hidden"
+                                            className="hidden"
                                             onChange={handleUpLoadImage}
                                             accept="image/gif, image/jpeg, image/png, image/jpg"
                                         />

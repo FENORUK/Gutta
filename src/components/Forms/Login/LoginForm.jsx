@@ -96,10 +96,10 @@ export default function LoginForm(props) {
             onSubmit={handleLogin}
         >
             <p className="mt-4 mb-2 text-4xl font-bold">Welcome to Gutta</p>
-            <p className="mb-4">
+            <p className="mb-4 text-sm">
                 Don't have an account?{" "}
                 <span
-                    className="hover:cursor-pointer text-[#175cff]"
+                    className="hover:cursor-pointer text-blue-600 font-bold"
                     onClick={() => onChange("register")}
                 >
                     Sign up for free

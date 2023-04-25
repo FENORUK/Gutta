@@ -96,10 +96,10 @@ export default function RegisterForm(props) {
             onSubmit={handleRegister}
         >
             <p className="mt-4 mb-2 text-4xl font-bold">Create Account</p>
-            <p className="mb-4">
+            <p className="mb-4 text-sm">
                 Already have an account?{" "}
                 <span
-                    className="hover:cursor-pointer text-[#175cff]"
+                    className="hover:cursor-pointer text-blue-600 font-bold"
                     onClick={() => onChange("login")}
                 >
                     Sign In

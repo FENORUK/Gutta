@@ -110,12 +110,12 @@ export const Content = ({ contents, setContents, onExpandBlock }) => {
             </div>
             {isOverflown ? (
                 <div
-                    className="w-full h-6 text-xs cursor-pointer absolute text-gray-400 "
+                    className="w-full h-6 text-xs cursor-pointer absolute text-slate-500 hover:text-black"
                     onClick={handleShowMoreContent}
                 >
                     <div className="absolute flex right-6 w-14">
-                        <span className="hover:text-gray-500 mr-2">more</span>
-                        <ChevronDownIcon className="w-4 h-4 hover:text-gray-500" />
+                        <span className="mr-2">more</span>
+                        <ChevronDownIcon className="w-4 h-4" />
                     </div>
                 </div>
             ) : null}

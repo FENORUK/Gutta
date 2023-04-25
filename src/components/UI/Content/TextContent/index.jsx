@@ -160,7 +160,7 @@ export const TextContent = ({
                 className={`${color} text-xs w-full p-0 border-none focus:ring-0 rounded-lg focus:outline-0 h-full overflow-hidden`}
             />
             {inputContext === "" ? (
-                <div className="absolute text-gray-400 cursor-pointer right-0 flex items-center">
+                <div className="absolute text-slate-500 cursor-pointer right-0 flex items-center">
                     <ListBulletIcon
                         className="w-5 h-5 hover:text-black"
                         onClick={() => setSelectedOption("task")}

@@ -1,7 +1,6 @@
 import React from "react"
 import {
     PlusSmallIcon,
-    TrashIcon,
     EllipsisHorizontalIcon,
 } from "@heroicons/react/24/solid"
 import { clsx } from "clsx"
@@ -9,14 +8,6 @@ import { NavLink, generatePath } from "react-router-dom"
 import { PAGES, PATH } from "../../../utils/constants"
 import { IconButton } from "../IconButton"
 import { FolderIcon } from "@heroicons/react/24/outline"
-
-const TRASH = [
-    {
-        Icon: TrashIcon,
-        label: "Trash",
-        url: "#",
-    },
-]
 
 export function SideBar(props) {
     const {
@@ -36,20 +27,22 @@ export function SideBar(props) {
             )}
         >
             <div className="w-full mx-auto flex-shrink-0 flex items-center px-3 py-4 text-center font-bold">
-                <div className="h-7 w-7 bg-[url('assets/logo512.png')] bg-cover"></div>
-                <div className="ml-2 text-2xl">Gutta</div>
+                <div className="h-8 w-8 bg-[url('assets/logo.png')] bg-cover"></div>
+                <div className="ml-2.5 text-2xl">Gutta</div>
             </div>
             <div className="h-full py-1 overflow-y-auto flex flex-col justify-between">
                 <ul className="my-4">
                     <li className="px-3">
-                        <span className="text-xs">DOCUMENTS</span>
+                        <span className="text-xs text-slate-500">
+                            DOCUMENTS
+                        </span>
                         <div className="h-full w-full py-2 overflow-y-auto">
-                            <ul className="text-gray-500">
+                            <ul className="text-slate-500">
                                 {Object.entries(PAGES).map(
                                     ([id, { Icon, name }]) => (
                                         <li
                                             key={id}
-                                            className="rounded-lg hover:bg-red-100 w-full"
+                                            className="rounded-lg w-full"
                                             data-drawer-hide="drawer-navigation"
                                             onClick={hideBackGround}
                                         >
@@ -61,10 +54,10 @@ export function SideBar(props) {
                                                 className={({ isActive }) =>
                                                     clsx(
                                                         {
-                                                            "bg-red-100 text-black":
+                                                            "bg-rose-100 text-black":
                                                                 isActive,
                                                         },
-                                                        "py-2 my-1 pl-2 block items-center font-normal rounded-lg hover:bg-red-100"
+                                                        "py-2 my-1 pl-2 block items-center font-normal rounded-lg hover:bg-rose-100"
                                                     )
                                                 }
                                             >
@@ -84,28 +77,28 @@ export function SideBar(props) {
                     </li>
                     <li className="px-3 py-4 flex flex-col items-center">
                         <div className="flex items-center w-full h-full">
-                            <span className="text-gray-500 text-xs flex-grow">
+                            <span className="text-slate-500 text-xs flex-grow">
                                 WORKSPACES
                             </span>
                             {allowEditWorkspaces && (
                                 <button
-                                    className="flex hover:bg-red-100 justify-center items-center w-6 h-6 rounded btn--create-workspace"
+                                    className="flex hover:bg-rose-100 justify-center items-center w-6 h-6 rounded btn--create-workspace"
                                     title="Create new Workspace"
                                     onClick={onWorkspaceAddButtonClicked}
                                 >
-                                    <PlusSmallIcon className="h-5 w-5 text-gray-500" />
+                                    <PlusSmallIcon className="h-5 w-5 text-slate-500" />
                                 </button>
                             )}
                         </div>
                     </li>
-                    <li className="flex flex-col items-center h-[300px] overflow-y-auto">
+                    <li className="flex flex-col items-center max-h-[300px] overflow-y-auto">
                         <div className="h-full w-full">
-                            <ul className="text-gray-500 px-3">
+                            <ul className="text-slate-500 px-3">
                                 {workspaces &&
                                     workspaces.map(({ id, name }) => (
                                         <li
                                             key={id}
-                                            className="rounded-lg hover:bg-red-100"
+                                            className="rounded-lg"
                                             data-drawer-hide="drawer-navigation"
                                             onClick={hideBackGround}
                                         >
@@ -117,10 +110,10 @@ export function SideBar(props) {
                                                 className={({ isActive }) =>
                                                     clsx(
                                                         {
-                                                            "bg-red-100 text-black":
+                                                            "bg-rose-100 text-black":
                                                                 isActive,
                                                         },
-                                                        "py-2 my-1 pl-2 block items-center font-normal rounded-lg hover:bg-red-100"
+                                                        "py-2 my-1 pl-2 block items-center font-normal rounded-lg hover:bg-rose-100"
                                                     )
                                                 }
                                             >
@@ -139,7 +132,7 @@ export function SideBar(props) {
                                                     </div>
                                                     {allowEditWorkspaces && (
                                                         <IconButton
-                                                            className="w-6 h-6 justify-center mr-2 text-gray-400 hover:text-black bg-transparent hover:bg-red-300"
+                                                            className="w-6 h-6 justify-center mr-2 text-slate-500 hover:text-black bg-transparent hover:bg-rose-300"
                                                             id={id}
                                                             onClick={(
                                                                 event
@@ -161,21 +154,6 @@ export function SideBar(props) {
                         </div>
                     </li>
                 </ul>
-                {TRASH.map((item) => (
-                    <div
-                        key={item.url}
-                        title="View deleted documents"
-                        className="py-3 pl-2 mx-3 mb-4 rounded-lg cursor-pointer hover:bg-red-100"
-                    >
-                        <button className="flex items-center font-normal text-gray-500 hover:bg-red-100">
-                            <item.Icon
-                                aria-hidden="true"
-                                className="w-4 h-4"
-                            ></item.Icon>
-                            <span className="ml-3 text-sm">{item.label}</span>
-                        </button>
-                    </div>
-                ))}
             </div>
         </aside>
     )

@@ -7,12 +7,14 @@ import {
 } from "@heroicons/react/24/solid"
 import get from "lodash/get"
 import { PAGE_SCROLL_WIDTH } from "../../../utils/constants"
+import clsx from "clsx"
 
 export const ScrollContainer = ({
     children,
     addButtonProps,
     itemsCount,
     activePageId,
+    isOnlyViewPages,
 }) => {
     const scrollRef = useRef()
     const [scrollRefLeft, setScrollRefLeft] = useState(0)
@@ -54,7 +56,7 @@ export const ScrollContainer = ({
                     <>
                         <div className="w-8 px-2 button-scroll">
                             <IconButton
-                                className="p-0 h-6 w-6 items-center justify-center text-gray-400 hover:text-black disabled:text-gray-400"
+                                className="p-0 h-6 w-6 items-center justify-center text-slate-500 hover:text-black disabled:text-gray-400 bg-gray-100"
                                 onClick={() => {
                                     scrollTo({ left: 0 })
                                 }}
@@ -65,7 +67,7 @@ export const ScrollContainer = ({
                         </div>
                         <div className="w-8 px-2">
                             <IconButton
-                                className="p-0 h-6 w-6 items-center justify-center text-gray-400 hover:text-black disabled:text-gray-400"
+                                className="p-0 h-6 w-6 items-center justify-center text-slate-500 hover:text-black disabled:text-gray-400 bg-gray-100"
                                 onClick={() => {
                                     scrollTo({
                                         left: scrollRef.current.scrollWidth,
@@ -81,10 +83,16 @@ export const ScrollContainer = ({
                         </div>
                     </>
                 )}
-                <div className="w-8 flex items-center justify-center ml-2 text-gray-400 hover:text-black">
+                <div className="w-8 flex items-center justify-center ml-2 text-slate-500">
                     <IconButton
                         {...addButtonProps}
-                        className="p-0 h-6 w-6 items-center justify-center"
+                        className={clsx(
+                            "p-0 h-6 w-6 items-center justify-center bg-gray-100",
+                            isOnlyViewPages
+                                ? "cursor-not-allowed"
+                                : "hover:text-black"
+                        )}
+                        disabled={isOnlyViewPages}
                     >
                         <PlusIcon className="w-4 h-4" />
                     </IconButton>

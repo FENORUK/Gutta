@@ -30,7 +30,7 @@ export const ContentItem = ({
 
     const iconProps = {
         className:
-            "w-5 h-5 text-gray-400 cursor-pointer opacity-0 icon hover:text-black pl-1",
+            "w-5 h-5 text-slate-500 cursor-pointer opacity-0 icon hover:text-black pl-1",
         onClick: handleDeleteContent,
     }
 
@@ -68,7 +68,7 @@ export const ContentItem = ({
                     />
                     <XMarkIcon
                         {...iconProps}
-                        className="w-5 h-5 text-gray-400 opacity-0 top-1 absolute icon cursor-pointer hover:text-black"
+                        className="w-5 h-5 text-slate-500 opacity-0 top-1 absolute icon cursor-pointer hover:text-black"
                     />
                 </>
             )}
