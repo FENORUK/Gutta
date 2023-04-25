@@ -35,6 +35,7 @@ import clsx from "clsx"
 import { useContext } from "react"
 import { AuthContext } from "../../contexts/AuthContext"
 import { pusher } from "../../lib"
+import { usePage } from "../../hooks/usePage"
 
 const DRAWER_ID = "drawer-navigation"
 const SHARE_MENU_ID = "menu-id"
@@ -77,6 +78,12 @@ export function Document() {
     const channel = pusher.subscribe(`channel-${docId}`)
     const socketId = pusher.connection.socket_id
 
+    const { pages, createPage, renamePage, deletePage, updatePages } = usePage(
+        doc?.pages || [],
+        socketId,
+        channel
+    )
+
     useEffect(() => {
         channel.bind("changeTitle", function (data) {
             if (pusher.connection.socket_id !== data.message.data.socketId) {
@@ -84,8 +91,11 @@ export function Document() {
                 setTempDoc({ ...doc, ...{ name: data.message.data.title } })
             }
         })
-    },[])
-    
+        return () => {
+            channel.unbind("changeTitle")
+        }
+    }, [])
+
     useEffect(() => {
         const fetchDocuments = async () => {
             loader.emit("start")
@@ -120,6 +130,7 @@ export function Document() {
                           ?.role,
                 listRole: [...listRole],
             })
+            updatePages(document.pages || [])
         }
         fetchDocuments()
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -265,6 +276,16 @@ export function Document() {
         customToast.success(message)
     }
 
+    useEffect(() => {
+        channel.bind("page", function (data) {
+            if (socketId !== data.message.data.socketId) {
+                const newPage = data.message.data
+                if (activePageId === newPage.pageId)
+                    setActivePageId(newPage.listPages[0]?.id)
+            }
+        })
+    }, [])
+
     if (!doc) return <></>
 
     return (
@@ -409,10 +430,14 @@ export function Document() {
                                 docId={docId}
                                 channel={channel}
                                 socketId={socketId}
-                                listPages={doc.pages}
+                                // listPages={doc.pages}
                                 activePageId={activePageId}
                                 isOnlyViewPages={isViewRole}
                                 setActivePageId={setActivePageId}
+                                pages={pages}
+                                createPage={createPage}
+                                renamePage={renamePage}
+                                deletePage={deletePage}
                             />
                         </div>
                     </div>
@@ -420,7 +445,7 @@ export function Document() {
                 <div className=" mx-12 mt-4">
                     <div className={clsx("w-full", isViewRole && "relative")}>
                         <Board
-                            listPages={doc.pages}
+                            listPages={pages}
                             docId={doc.id}
                             channel={channel}
                             socketId={socketId}

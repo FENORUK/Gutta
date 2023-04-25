@@ -8,7 +8,6 @@ import { useModal } from "../../../hooks/useModal"
 import "./index.css"
 import { DeleteModal } from "../ModalBox/DeleteModal"
 import { ScrollContainer } from "./ScrollContainer"
-import { usePage } from "../../../hooks/usePage"
 
 const POPOVER_ADD_ID = "popover-add"
 const POPOVER_PAGE_ID = "popover-page"
@@ -17,30 +16,15 @@ const DELETE_MODAL_ID = "button-delete"
 
 export const PageNavigation = ({
     docId,
-    channel,
-    socketId,
-    listPages,
     activePageId,
     isOnlyViewPages,
     setActivePageId,
+    pages,
+    createPage,
+    renamePage,
+    deletePage,
 }) => {
     const [showRenameInput, setShowRenameInput] = useState(false)
-
-    const { pages, createPage, renamePage, deletePage } = usePage(
-        listPages,
-        socketId,
-        channel
-    )
-
-    useEffect(() => {
-        channel.bind("page", function (data) {
-            if (socketId !== data.message.data.socketId) {
-                const newPage = data.message.data
-                if (activePageId === newPage.pageId)
-                    setActivePageId(newPage.listPages[0]?.id)
-            }
-        })
-    }, [])
 
     const [selectedPageId, setSelectedPageId] = useState("")
     const [tempPageName, setTempPageName] = useState("")

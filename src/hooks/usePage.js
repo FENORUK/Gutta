@@ -15,7 +15,7 @@ export const usePage = (listPages, socketId, channel) => {
                 setPages(data.message.data.listPages)
             }
         })
-    },[])
+    }, [])
 
     const createPage = async ({ docId, pageName }) => {
         if (pages.length === MAXIMUM_PAGES_NUMBER) {
@@ -102,5 +102,5 @@ export const usePage = (listPages, socketId, channel) => {
         return newListPage
     }
 
-    return { pages, createPage, renamePage, deletePage }
+    return { pages, createPage, renamePage, deletePage, updatePages: setPages }
 }
