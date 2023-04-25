@@ -53,14 +53,20 @@ export const Board = ({
     let temp = DEFAULT_TEMP
     useEffect(() => {
         channel.bind("createBlock", function (data) {
-            if (socketId !== data.message.data.socketId) {
+            if (
+                socketId !== data.message.data.socketId &&
+                data.message.data.pageId === activePageId
+            ) {
                 const newBlocks = [...blocks, data.message.data.newBlock]
                 setBlocks(newBlocks)
             }
         })
 
         channel.bind("updateBlocks", function (data) {
-            if (socketId !== data.message.data.socketId) {
+            if (
+                socketId !== data.message.data.socketId && activePageId &&
+                data.message.data.pageId === activePageId
+            ) {
                 const newBlocks = data.message.data.newBlocks
                 const listBlocks = blocks.map((block) => {
                     const mappedBlock = newBlocks.find(
@@ -291,12 +297,14 @@ export const Board = ({
         setBlocks(newBlocks)
         await RealtimeService.sendData("createBlock", docId, {
             socketId: socketId,
+            pageId: activePageId,
             newBlock: {
                 i: id,
                 title: null,
                 color: "bg-white",
                 isTitleHidden: 0,
                 contents: [],
+                pageId: activePageId,
                 x: x,
                 y: y,
                 w: width,
@@ -357,6 +365,7 @@ export const Board = ({
                         channel={channel}
                         socketId={socketId}
                         blockId={block.i}
+                        pageId={block.pageId}
                         title={block.title}
                         color={block.color}
                         isTitleHidden={block.isTitleHidden}
@@ -405,7 +414,7 @@ export const Board = ({
                 const { i, x, y, w, h } = updatingBlock
 
                 if (i === "temp") checkUpdate = false
-                
+
                 const mappedBlock = blocks.find((block) => block.i === i)
 
                 if (!mappedBlock) {
@@ -417,6 +426,7 @@ export const Board = ({
                         id: i,
                         size: `${w}x${h}`,
                         position: `${x}x${y}`,
+                        pageId: mappedBlock.pageId,
                     })
                 }
 
@@ -424,7 +434,6 @@ export const Board = ({
             }
 
             setBlocks(layout)
-
             if (checkUpdate && changes.length > 0) {
                 loader.emit("start")
                 const response = await BlockService.editListBLock(docId, {
@@ -433,6 +442,7 @@ export const Board = ({
                 loader.emit("stop")
                 handlerError(response)
                 await RealtimeService.sendData("updateBlocks", docId, {
+                    pageId: activePageId,
                     socketId: socketId,
                     newBlocks: changes,
                 })

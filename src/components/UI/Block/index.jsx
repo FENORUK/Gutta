@@ -27,7 +27,7 @@ export const Block = ({
     isTitleHidden,
     onExpandBlock,
 }) => {
-    const { color, docId, blockId, channel, socketId, deleteBlock } =
+    const { color, docId, blockId, channel, socketId, pageId, deleteBlock } =
         useContext(BlockContext)
     const [contents, setContents] = useState(listContents)
     const [inputTitle, setInputTitle] = useState(title || "")
@@ -44,7 +44,7 @@ export const Block = ({
                 deleteBlock(extractBlockId(data.message.data.blockId))
             }
         })
-    },[])
+    })
 
     const handleInput = useCallback(
         async (event) => {
@@ -63,6 +63,7 @@ export const Block = ({
                 handlerError(response)
                 await RealtimeService.sendData("updateTitleBlock", docId, {
                     socketId: socketId,
+                    pageId: pageId,
                     blockId: extractBlockId(blockId),
                     title: inputValue,
                     color: color,

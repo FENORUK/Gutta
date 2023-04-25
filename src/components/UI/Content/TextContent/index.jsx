@@ -49,6 +49,7 @@ export const TextContent = ({
             type: "text",
             block_id: blockId,
         })
+        
         loader.emit("stop")
         handlerError(response)
         const { id, name, position, type, store_url } = response.results
