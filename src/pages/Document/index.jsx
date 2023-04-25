@@ -13,6 +13,7 @@ import {
     PATH,
     USER_ROLE,
 } from "../../utils/constants"
+import RealtimeService from "../../services/realtimeService"
 import "react-toastify/dist/ReactToastify.css"
 import { ReactComponent as LockIcon } from "../../assets/lock.svg"
 import {
@@ -37,6 +38,7 @@ import { PopoverShare } from "./PopoverShare"
 import clsx from "clsx"
 import { useContext } from "react"
 import { AuthContext } from "../../contexts/AuthContext"
+import { pusher } from "../../lib"
 
 const DRAWER_ID = "drawer-navigation"
 const SHARE_MENU_ID = "menu-id"
@@ -67,7 +69,6 @@ export function Document() {
         listRole: [],
     })
     const { workspaces, fetchWorkspaces } = useWorkspace()
-
     const [activePageId, setActivePageId] = useState(undefined)
     const [selectedContent, setSelectedContent] = useState([])
     const { drawer } = useDrawer({ id: DRAWER_ID, shouldUpdate: doc })
@@ -77,6 +78,18 @@ export function Document() {
     const isViewRole = roleData.userRole === USER_ROLE.VIEW.name
     const isEditRole = roleData.userRole === USER_ROLE.EDIT.name
 
+    const channel = pusher.subscribe(`channel-${docId}`)
+    const socketId = pusher.connection.socket_id
+
+    useEffect(() => {
+        channel.bind("changeTitle", function (data) {
+            if (pusher.connection.socket_id !== data.message.data.socketId) {
+                setDoc({ ...doc, ...{ name: data.message.data.title } })
+                setTempDoc({ ...doc, ...{ name: data.message.data.title } })
+            }
+        })
+    },[])
+    
     useEffect(() => {
         const fetchDocuments = async () => {
             loader.emit("start")
@@ -161,6 +174,11 @@ export function Document() {
             setDoc(updatedDoc)
             setTempDoc(updatedDoc)
             setShowNameInput(!showNameInput)
+
+            await RealtimeService.sendData("changeTitle", docId, {
+                socketId: pusher.connection.socket_id,
+                title: `${tempDoc.name}`,
+            })
         }
     }
 
@@ -255,7 +273,7 @@ export function Document() {
 
     return (
         <div className="relative bg-gray-50 flex justify-center">
-            <div className="bg-white w-[1298px]  rounded-t-3xl border border-solid border-gray-100">
+            <div className="bg-white w-[1298px] rounded-t-3xl border border-solid border-gray-100">
                 <div className="w-full px-12">
                     <div className="flex justify-between items-center border-b border-gray-100">
                         <div className="flex">
@@ -407,6 +425,8 @@ export function Document() {
                         <div className="mt-4 h-full page-container">
                             <PageNavigation
                                 docId={docId}
+                                channel={channel}
+                                socketId={socketId}
                                 listPages={doc.pages}
                                 activePageId={activePageId}
                                 isOnlyViewPages={isViewRole}
@@ -420,6 +440,8 @@ export function Document() {
                         <Board
                             listPages={doc.pages}
                             docId={doc.id}
+                            channel={channel}
+                            socketId={socketId}
                             activePageId={activePageId}
                             setSelectedContent={setSelectedContent}
                             selectedContent={selectedContent}

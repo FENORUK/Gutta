@@ -1,4 +1,10 @@
-import React, { useState, useRef, useContext } from "react"
+import React, {
+    useState,
+    useRef,
+    useCallback,
+    useContext,
+    useEffect,
+} from "react"
 import "/node_modules/react-grid-layout/css/styles.css"
 import "/node_modules/react-resizable/css/styles.css"
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid"
@@ -11,6 +17,8 @@ import { DEFAULT_TITLE } from "../../../utils/constants"
 import { loader } from "../Loader"
 import { Content } from "../Content"
 import { handlerError } from "../../../helper/helper"
+import RealtimeService from "../../../services/realtimeService"
+import { extractBlockId } from "../../../helper/helper"
 
 export const Block = ({
     title,
@@ -19,7 +27,8 @@ export const Block = ({
     isTitleHidden,
     onExpandBlock,
 }) => {
-    const { color, docId, blockId } = useContext(BlockContext)
+    const { color, docId, blockId, channel, socketId, deleteBlock } =
+        useContext(BlockContext)
     const [contents, setContents] = useState(listContents)
     const [inputTitle, setInputTitle] = useState(title || "")
     const [showMenu, setShowMenu] = useState(false)
@@ -29,20 +38,41 @@ export const Block = ({
     const ref = useRef()
     useOnClickOutside(ref, () => setShowMenu(false))
 
-    const handleInput = async (event) => {
-        if (event.key === "Enter") {
-            loader.emit("start")
-            event.preventDefault()
-            const inputValue = event.target.value
-            const response = await BlockService.updateBlock(docId, blockId, {
-                title: inputValue,
-            })
-            loader.emit("stop")
-            handlerError(response)
-            setInputTitle(inputValue)
-            event.target.blur()
-        }
-    }
+    useEffect(() => {
+        channel.bind("deleteBlock", function (data) {
+            if (socketId !== data.message.data.socketId) {
+                deleteBlock(extractBlockId(data.message.data.blockId))
+            }
+        })
+    },[])
+
+    const handleInput = useCallback(
+        async (event) => {
+            if (event.key === "Enter") {
+                loader.emit("start")
+                event.preventDefault()
+                const inputValue = event.target.value
+                const response = await BlockService.updateBlock(
+                    docId,
+                    extractBlockId(blockId),
+                    {
+                        title: inputValue,
+                    }
+                )
+                loader.emit("stop")
+                handlerError(response)
+                await RealtimeService.sendData("updateTitleBlock", docId, {
+                    socketId: socketId,
+                    blockId: extractBlockId(blockId),
+                    title: inputValue,
+                    color: color,
+                })
+                setInputTitle(inputValue)
+                event.target.blur()
+            }
+        },
+        [blockId]
+    )
 
     return (
         <div
@@ -66,9 +96,9 @@ export const Block = ({
             </div>
 
             <div
-                className={clsx(
+                className={
                     "drag-handle w-full h-full transform transition rounded-tr-lg rounded-tl-lg"
-                )}
+                }
                 style={{ height: "calc(100% - 24px)" }}
             >
                 {children}
@@ -100,7 +130,9 @@ export const Block = ({
                     <div ref={ref}>
                         <MenuBlock
                             tabIndex={0}
+                            title={inputTitle}
                             showTitle={showTitle}
+                            isTitleHidden={isTitleHidden}
                             setShowTitle={setShowTitle}
                             showMenu={showMenu}
                             setShowMenu={setShowMenu}

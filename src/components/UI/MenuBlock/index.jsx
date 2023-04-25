@@ -13,32 +13,54 @@ import { MoveBlock } from "../MoveBlocks"
 import BlockService from "../../../services/blockService"
 import { loader } from "../Loader"
 import { handlerError } from "../../../helper/helper"
+import RealtimeService from "../../../services/realtimeService"
+import { extractBlockId } from "../../../helper/helper"
 
 export function MenuBlock({
     showTitle,
     setShowTitle,
     showMenu,
     setShowMenu,
+    title,
 }) {
-    const { deleteBlock, docId, blockId } = useContext(BlockContext)
+    const { deleteBlock, docId, blockId, socketId, color } =
+        useContext(BlockContext)
 
     const handleShowTitle = async () => {
         loader.emit("start")
-        const response = await BlockService.updateBlock(docId, blockId, {
-            is_title_hidden: Number(showTitle),
-        })
+        const response = await BlockService.updateBlock(
+            docId,
+            extractBlockId(blockId),
+            {
+                is_title_hidden: Number(showTitle),
+            }
+        )
         loader.emit("stop")
         handlerError(response)
         setShowTitle(!showTitle)
         setShowMenu(!showMenu)
+        await RealtimeService.sendData("updateStateTitleBlock", docId, {
+            socketId: socketId,
+            blockId: extractBlockId(blockId),
+            is_title_hidden: Number(showTitle),
+            title: title,
+            color: color,
+        })
     }
 
     const handleDelete = async () => {
-        deleteBlock(blockId)
+        deleteBlock(extractBlockId(blockId))
         loader.emit("start")
-        const response = await BlockService.deleteBlockById(docId, blockId)
+        const response = await BlockService.deleteBlockById(
+            docId,
+            extractBlockId(blockId)
+        )
         loader.emit("stop")
         handlerError(response)
+        await RealtimeService.sendData("deleteBlock", docId, {
+            socketId: socketId,
+            blockId: extractBlockId(blockId),
+        })
     }
 
     return (
@@ -78,7 +100,7 @@ export function MenuBlock({
                         <PaintBrushIcon className="w-4 h-4 inline mx-2" />
                         <span>Tile style</span>
                         <ChevronDownIcon className="w-4 h-4 inline mx-2 float-right mt-1" />
-                        <Tile />
+                        <Tile title={title} showTitle={showTitle} />
                     </div>
 
                     <button
