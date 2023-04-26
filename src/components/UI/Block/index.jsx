@@ -44,7 +44,10 @@ export const Block = ({
                 deleteBlock(extractBlockId(data.message.data.blockId))
             }
         })
-    })
+        return () => {
+            channel.unbind("deleteBlock")
+        }
+    },[])
 
     const handleInput = useCallback(
         async (event) => {

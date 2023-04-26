@@ -64,7 +64,7 @@ export const Board = ({
 
         channel.bind("updateBlocks", function (data) {
             if (
-                socketId !== data.message.data.socketId && activePageId &&
+                socketId !== data.message.data.socketId &&
                 data.message.data.pageId === activePageId
             ) {
                 const newBlocks = data.message.data.newBlocks
@@ -163,27 +163,15 @@ export const Board = ({
             }
         })
 
-        channel.bind("createContent", function (data) {
-            const newBlock = data.message.data
-            if (socketId !== newBlock.socketId) {
-                const listBlocks = blocks.map((block) => {
-                    if (
-                        extractBlockId(block.i) ===
-                        extractBlockId(newBlock.blockId)
-                    ) {
-                        block = {
-                            ...block,
-                            i: `${block.i}_${Date.now()}`,
-                            contents: newBlock.listContents,
-                            h: newBlock.height,
-                        }
-                    }
-                    return block
-                })
-                setBlocks(listBlocks)
-            }
-        })
-    }, [blocks])
+        return () => {
+            channel.unbind("createBlock")
+            channel.unbind("updateBlocks")
+            channel.unbind("updateTitleBlock")
+            channel.unbind("updateStateTitleBlock")
+            channel.unbind("updateColorBlock")
+            channel.unbind("updatePageBlock")
+        }
+    }, [blocks, activePageId])
 
     useEffect(() => {
         if (!containerRef.current) return
@@ -371,7 +359,6 @@ export const Board = ({
                         isTitleHidden={block.isTitleHidden}
                         listPages={listPages}
                         deleteBlock={deleteBlock}
-                        block={block}
                         selectedContent={selectedContent}
                         setPreviewImage={setPreviewImage}
                         setShowPreviewImage={setShowPreviewImage}
@@ -448,7 +435,7 @@ export const Board = ({
                 })
             }
         },
-        [blocks, docId, setBlocks]
+        [blocks, docId, setBlocks, activePageId]
     )
 
     return (

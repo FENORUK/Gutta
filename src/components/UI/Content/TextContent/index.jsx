@@ -7,7 +7,6 @@ import { useContext } from "react"
 import { BlockContext } from "../../../../contexts/BlockContext"
 import { getCurrentMaxHeightBlock } from "../helper"
 import { handlerError } from "../../../../helper/helper"
-import { realTimeCreateContent } from "../helper"
 
 export const TextContent = ({
     name,
@@ -25,11 +24,8 @@ export const TextContent = ({
         color,
         setSelectedContent,
         height,
-        socketId,
-        block,
         blockId,
     } = useContext(BlockContext)
-    let listContents = block.contents
 
     const currentMaxHeightBlock = getCurrentMaxHeightBlock({
         contentsCount,
@@ -49,7 +45,7 @@ export const TextContent = ({
             type: "text",
             block_id: blockId,
         })
-        
+
         loader.emit("stop")
         handlerError(response)
         const { id, name, position, type, store_url } = response.results
@@ -61,36 +57,11 @@ export const TextContent = ({
             store_url,
             block_id: blockId,
         })
-        listContents = [
-            ...listContents,
-            {
-                id,
-                name,
-                position,
-                type,
-                store_url,
-                block_id: blockId,
-            },
-        ]
         setInputContext("")
 
         if (height < TEXT_EXPAND + currentMaxHeightBlock) {
             onExpandBlock(TEXT_EXPAND)
-            realTimeCreateContent({
-                docId: docId,
-                socketId: socketId,
-                blockId: blockId,
-                listContents: listContents,
-                height: height + TEXT_EXPAND,
-            })
         }
-        realTimeCreateContent({
-            docId: docId,
-            socketId: socketId,
-            blockId: blockId,
-            listContents: listContents,
-            height: height,
-        })
     }
 
     const updateTextContent = async (event) => {
