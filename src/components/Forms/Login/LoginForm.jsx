@@ -12,9 +12,7 @@ import { useNavigate } from "react-router-dom"
 import { COOKIES, cookies } from "../../../utils/cookies"
 import { loader } from "../../UI/Loader"
 import { AuthContext } from "../../../contexts/AuthContext"
-import ReCAPTCHA from "react-google-recaptcha";
-import axios from 'axios';
-
+import ReCAPTCHA from "react-google-recaptcha"
 
 const INPUTS = [
     {
@@ -31,13 +29,11 @@ const INPUTS = [
 const DEFAULT_ERROR_FORMAT = { email: "", password: "" }
 
 export default function LoginForm(props) {
+    const [captcha, setCaptcha] = useState(false)
 
-    //recapcha
-    const [recaptchaToken, setREcaptchaValue] = useState(null);
-
-    const handleRecaptchaChange = (token) => {
-        setREcaptchaValue(token)
-    };
+    const handleRecaptchaResponse = () => {
+        setCaptcha(true)
+    }
 
     const { onChange } = props
     const [loginData, setLoginData] = useState(DEFAULT_ERROR_FORMAT)
@@ -67,25 +63,8 @@ export default function LoginForm(props) {
     }
 
     const handleLogin = async (event) => {
+        if (!captcha) return
         event.preventDefault()
-
-        //recaptcha
-        try {
-            const response = await axios.post('/api/login', {
-                recaptchaToken: recaptchaToken,
-            });
-
-        } catch (error) {
-            if (error.response.status === 401) {
-
-                alert('Tên đăng nhập hoặc mật khẩu không chính xác');
-            } else {
-
-                console.error(error);
-                alert('Đã có lỗi xảy ra, vui lòng thử lại sau');
-            }
-        }
-
         event.stopPropagation()
         const validateMessages = validateLoginInput(loginData)
         if (Object.values(validateMessages).some((message) => message !== "")) {
@@ -145,11 +124,12 @@ export default function LoginForm(props) {
                 />
             ))}
             <div className="mb-7">
-
-                {<ReCAPTCHA
-                    sitekey="6LdIeh0mAAAAAMbDJi-aBLuu79VWWITYwYPRh-q7"
-                    onChange={handleRecaptchaChange}
-                />}
+                {
+                    <ReCAPTCHA
+                        sitekey="6LdIeh0mAAAAAMbDJi-aBLuu79VWWITYwYPRh-q7"
+                        onChange={handleRecaptchaResponse}
+                    />
+                }
             </div>
             <Button type="submit">Login</Button>
         </form>
