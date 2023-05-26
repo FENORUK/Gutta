@@ -344,6 +344,10 @@ export const Board = ({
         setBlocks(blocks.filter((block) => block.i !== id))
     }
 
+    const Pages = listPages.filter((page) => {
+        return page.id !== activePageId
+    })
+
     const showBlocks = () => {
         return blocks.map((block, index) => {
             return (
@@ -358,7 +362,7 @@ export const Board = ({
                         title={block.title}
                         color={block.color}
                         isTitleHidden={block.isTitleHidden}
-                        listPages={listPages}
+                        listPages={Pages}
                         deleteBlock={deleteBlock}
                         selectedContent={selectedContent}
                         setPreviewImage={setPreviewImage}
