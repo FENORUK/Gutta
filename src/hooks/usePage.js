@@ -15,6 +15,10 @@ export const usePage = (listPages, socketId, channel) => {
                 setPages(data.message.data.listPages)
             }
         })
+        return () => {
+            channel.unbind("page")
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const createPage = async ({ docId, pageName }) => {

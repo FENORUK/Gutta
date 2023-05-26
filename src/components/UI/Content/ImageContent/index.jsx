@@ -68,7 +68,7 @@ export function ImageContent({ url, contentId, handleUpdateContent }) {
                     className="right-1 icon top-1 cursor-pointer w-6 h-6 rounded-md opacity-0 bg-gray-100 hover:bg-white hover:opacity-100 absolute flex items-center justify-center"
                     onClick={() => previewImage()}
                 >
-                    <ArrowsPointingOutIcon className="w-4 h-4 text-gray-300 hover:text-black" />
+                    <ArrowsPointingOutIcon onClick={() => previewImage()} className="w-4 h-4 text-gray-300 hover:text-black" />
                 </div>
             )}
         </div>

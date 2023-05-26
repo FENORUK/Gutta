@@ -75,6 +75,7 @@ export const Block = ({
                 event.target.blur()
             }
         },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [blockId]
     )
 

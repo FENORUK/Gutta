@@ -74,7 +74,6 @@ export const PopoverShare = ({
                                     className="border-none w-72 h-8 focus:ring-0 bg-gray-100 py-1 pl-2 pr-24 text-xs rounded-md"
                                     value={emailInput}
                                     onChange={(event) => {
-                                        console.log(event.target.value)
                                         setEmailInput(event.target.value)
                                     }}
                                     onKeyDown={handleKeyDown}

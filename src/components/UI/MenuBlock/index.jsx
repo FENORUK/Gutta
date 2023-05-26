@@ -98,7 +98,7 @@ export function MenuBlock({
 
                     <div className="py-2 my-1 group hover:bg-gray-200 rounded-lg hover:text-neutral-800">
                         <PaintBrushIcon className="w-4 h-4 inline mx-2" />
-                        <span>Tile style</span>
+                        <span>Block style</span>
                         <ChevronDownIcon className="w-4 h-4 inline mx-2 float-right mt-1" />
                         <Tile title={title} showTitle={showTitle} />
                     </div>

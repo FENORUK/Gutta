@@ -3,6 +3,8 @@ import { generatePath, useNavigate, useSearchParams } from "react-router-dom"
 import DocumentService from "../../services/documentService"
 import { loader } from "../../components/UI/Loader"
 import { PATH } from "../../utils/constants"
+import { pusher } from "../../lib"
+import RealtimeService from "../../services/realtimeService"
 
 export const InvitePage = () => {
     const [query] = useSearchParams()
@@ -27,6 +29,14 @@ export const InvitePage = () => {
             const {
                 results: { document_id },
             } = response
+
+            pusher.subscribe(`channel-${document_id}`)
+            const socketId = pusher.connection.socket_id
+            await RealtimeService.sendData("userJoined", document_id, {
+                socketId: socketId,
+                action: "reload",
+            })
+
             navigate(
                 generatePath(PATH.DOCUMENT.DEFAULT, { docId: document_id })
             )

@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom"
 import { COOKIES, cookies } from "../../../utils/cookies"
 import { loader } from "../../UI/Loader"
 import { AuthContext } from "../../../contexts/AuthContext"
+import ReCAPTCHA from "react-google-recaptcha"
 
 const INPUTS = [
     {
@@ -28,6 +29,12 @@ const INPUTS = [
 const DEFAULT_ERROR_FORMAT = { email: "", password: "" }
 
 export default function LoginForm(props) {
+    const [captcha, setCaptcha] = useState(false)
+
+    const handleRecaptchaResponse = () => {
+        setCaptcha(true)
+    }
+
     const { onChange } = props
     const [loginData, setLoginData] = useState(DEFAULT_ERROR_FORMAT)
     const [errors, setErrors] = useState(DEFAULT_ERROR_FORMAT)
@@ -56,6 +63,7 @@ export default function LoginForm(props) {
     }
 
     const handleLogin = async (event) => {
+        if (!captcha) return
         event.preventDefault()
         event.stopPropagation()
         const validateMessages = validateLoginInput(loginData)
@@ -115,6 +123,14 @@ export default function LoginForm(props) {
                     errorMessage={errors[name]}
                 />
             ))}
+            <div className="mb-7">
+                {
+                    <ReCAPTCHA
+                        sitekey="6LdIeh0mAAAAAMbDJi-aBLuu79VWWITYwYPRh-q7"
+                        onChange={handleRecaptchaResponse}
+                    />
+                }
+            </div>
             <Button type="submit">Login</Button>
         </form>
     )
